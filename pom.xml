@@ -7,12 +7,13 @@
 	<version>0.0.1-SNAPSHOT</version>
 
 	<dependencies>
-		<!-- https://mvnrepository.com/artifact/org.sosy-lab/java-smt -->
+		<!-- https://mvnrepository.com/artifact/org.sosy-lab/java-smt 
 		<dependency>
 			<groupId>org.sosy-lab</groupId>
 			<artifactId>java-smt</artifactId>
 			<version>3.6.0</version>
-		</dependency>
+		</dependency> 
+		-->
 		<!-- https://mvnrepository.com/artifact/com.github.jsqlparser/jsqlparser -->
 		<dependency>
 			<groupId>com.github.jsqlparser</groupId>
