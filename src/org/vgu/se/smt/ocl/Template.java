@@ -16,7 +16,7 @@ limitations under the License.
 @author: ngpbh
 ***************************************************************************/
 
-package org.vgu.se.smt;
+package org.vgu.se.smt.ocl;
 
 public class Template {
     public static class True {

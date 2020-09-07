@@ -5,6 +5,10 @@
 			{
 				"name": "email",
 				"type": "String"
+			},
+			{
+				"name": "age",
+				"type": "Integer"
 			}
 		],
 		"ends": [
