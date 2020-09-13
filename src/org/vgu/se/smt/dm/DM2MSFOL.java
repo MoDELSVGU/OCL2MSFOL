@@ -16,18 +16,12 @@ limitations under the License.
 @author: ngpbh
 ***************************************************************************/
 
-package org.vgu.se.smt.ocl.dm;
+package org.vgu.se.smt.dm;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.json.simple.JSONArray;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
 import org.vgu.dm2schema.dm.Association;
 import org.vgu.dm2schema.dm.Attribute;
 import org.vgu.dm2schema.dm.DataModel;
@@ -36,7 +30,7 @@ import org.vgu.se.smt.file.FileManager;
 
 public class DM2MSFOL {
 
-    public static class Template {
+    private static class Template {
         public static String ENTITY = "(declare-fun %s (Classifier) Bool)";
         public static String ENTITY_1 = "(assert (not (%s nullClassifier)))";
         public static String ATTRIBUTE = "(declare-fun %s_%s (Classifier) %s)";
@@ -51,21 +45,8 @@ public class DM2MSFOL {
 
     public static DataModel dm;
 
-    public static void setDataModelFromFile(String filePath)
-        throws FileNotFoundException, IOException, ParseException, Exception {
-        dm = transformToDataModel(filePath);
-    }
-
-    public static void toMSFOL() {
-    }
-
-    private static DataModel transformToDataModel(String dataModelURI)
-        throws IOException, ParseException, FileNotFoundException, Exception {
-        File dataModelFile = new File(dataModelURI);
-        JSONArray dataModelJSONArray = (JSONArray) new JSONParser()
-            .parse(new FileReader(dataModelFile));
-        DataModel context = new DataModel(dataModelJSONArray);
-        return context;
+    public static void setDataModel(DataModel dm_) {
+        dm = dm_;
     }
 
     public static void map(FileManager fileManager) throws IOException {
