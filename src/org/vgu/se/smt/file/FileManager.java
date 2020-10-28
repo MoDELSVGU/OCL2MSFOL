@@ -24,6 +24,7 @@ public final class FileManager {
     private static String fileName = "resources\\test.smt2";
     private static FileWriter fileWriter;
     private static final FileManager INSTANCE = new FileManager();
+    private boolean safeMode = true;
     
     private FileManager() {}
 
@@ -49,12 +50,27 @@ public final class FileManager {
         writeln("(set-logic UFSLIA)");
         writeln("(set-option :produce-models true)");
         writeln("(declare-sort Classifier 0)");
+        if(!safeMode) writeln("(declare-sort Type 0)");
         writeln("(declare-const nullClassifier Classifier)");
-        writeln("(declare-const nullInteger Int)");
+        if(!safeMode) writeln("(declare-const invalidClassifier Classifier)");
+        writeln("(declare-const nullInt Int)");
+        if(!safeMode) writeln("(declare-const invalidInt Int)");
         writeln("(declare-const nullString String)");
+        if(!safeMode) writeln("(declare-const invalidString String)");
+        if(!safeMode) writeln("(assert (distinct nullClassifier invalidClassifier))");
+        if(!safeMode) writeln("(assert (distinct nullInt invalidInt))");
+        if(!safeMode) writeln("(assert (distinct nullString invalidString))");
     }
 
     public void checkSat() throws IOException {
         writeln("(check-sat)");
+    }
+
+    public boolean isSafeMode() {
+        return safeMode;
+    }
+
+    public void setSafeMode(boolean safeMode) {
+        this.safeMode = safeMode;
     }
 }
