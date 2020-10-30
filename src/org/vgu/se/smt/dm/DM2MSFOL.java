@@ -40,7 +40,7 @@ public class DM2MSFOL {
         public static String ATTRIBUTE_1 = "(assert (= (%s_%s nullClassifier) invalid%s))";
         public static String ATTRIBUTE_1_BIS = "(assert (= (%s_%s invalidClassifier) invalid%s))";
         public static String ATTRIBUTE_2 = "(assert (forall ((x Classifier))\r\n"
-            + "    (=> %s\r\n" + "        (= (%s_%s x) invalid%s))))";
+            + "    (=> %s\r\n" + "        (distinct (%s_%s x) invalid%s))))";
         public static String ASSOCIATION = "(declare-fun %s_%s (Classifier Classifier) Bool)";
         public static String ASSOCIATION_1 = "(assert (forall ((x Classifier))\r\n"
             + "    (forall ((y Classifier)) \r\n"
