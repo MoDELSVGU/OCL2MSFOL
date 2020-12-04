@@ -230,12 +230,6 @@ public class O2F_InvalidVisitor extends OCL2MSFOLVisitor {
     }
 
     @Override
-    public void visit(RealLiteralExp realLiteralExp) {
-        // TODO Auto-generated method stub
-
-    }
-
-    @Override
     public void visit(PropertyCallExp propertyCallExp) {
         // TODO Auto-generated method stub
 
@@ -252,17 +246,4 @@ public class O2F_InvalidVisitor extends OCL2MSFOLVisitor {
         // TODO Auto-generated method stub
 
     }
-
-    @Override
-    public void visit(SqlFnCurdate variableExp) {
-        // TODO Auto-generated method stub
-
-    }
-
-    @Override
-    public void visit(SqlFnTimestampdiff variableExp) {
-        // TODO Auto-generated method stub
-
-    }
-
 }

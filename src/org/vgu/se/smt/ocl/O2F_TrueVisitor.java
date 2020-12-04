@@ -17,6 +17,8 @@ limitations under the License.
 
 package org.vgu.se.smt.ocl;
 
+import java.util.List;
+
 import org.vgu.dm2schema.dm.DataModel;
 
 import com.vgu.se.jocl.expressions.AssociationClassCallExp;
@@ -30,9 +32,11 @@ import com.vgu.se.jocl.expressions.PropertyCallExp;
 import com.vgu.se.jocl.expressions.RealLiteralExp;
 import com.vgu.se.jocl.expressions.StringLiteralExp;
 import com.vgu.se.jocl.expressions.TypeExp;
+import com.vgu.se.jocl.expressions.Variable;
 import com.vgu.se.jocl.expressions.VariableExp;
 import com.vgu.se.jocl.expressions.sql.functions.SqlFnCurdate;
 import com.vgu.se.jocl.expressions.sql.functions.SqlFnTimestampdiff;
+import com.vgu.se.jocl.utils.VariableUtils;
 
 public class O2F_TrueVisitor extends OCL2MSFOLVisitor {
 
@@ -226,7 +230,16 @@ public class O2F_TrueVisitor extends OCL2MSFOLVisitor {
         case "size":
             break;
         case "isEmpty":
-            break;
+            template = Template.True.isEmpty;
+            
+            exp = operationCallExp.getSource();
+            String var = "x";
+            String type = "Classifier";
+            
+            evalVisitor = new O2F_EvalVisitor(dm);
+            
+            List<Variable> fvExp = VariableUtils.FVars(exp);
+            
         case "notEmpty":
             break;
         case "isUnique":
@@ -263,12 +276,6 @@ public class O2F_TrueVisitor extends OCL2MSFOLVisitor {
     }
 
     @Override
-    public void visit(RealLiteralExp realLiteralExp) {
-        // TODO Auto-generated method stub
-
-    }
-
-    @Override
     public void visit(PropertyCallExp propertyCallExp) {
         // TODO Auto-generated method stub
 
@@ -285,17 +292,4 @@ public class O2F_TrueVisitor extends OCL2MSFOLVisitor {
         // TODO Auto-generated method stub
 
     }
-
-    @Override
-    public void visit(SqlFnCurdate variableExp) {
-        // TODO Auto-generated method stub
-
-    }
-
-    @Override
-    public void visit(SqlFnTimestampdiff variableExp) {
-        // TODO Auto-generated method stub
-
-    }
-
 }
