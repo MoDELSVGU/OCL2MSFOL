@@ -2,7 +2,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.Scanner;
 
 import org.json.simple.JSONArray;
 import org.json.simple.parser.JSONParser;
@@ -10,15 +9,7 @@ import org.json.simple.parser.ParseException;
 import org.vgu.dm2schema.dm.DataModel;
 import org.vgu.se.smt.dm.DM2MSFOL;
 import org.vgu.se.smt.file.FileManager;
-import org.vgu.se.smt.sql.BooleanValue;
-import org.vgu.se.smt.sql.CaseWhenThen;
-import org.vgu.se.smt.sql.EqualsTo;
-import org.vgu.se.smt.sql.Expression;
-import org.vgu.se.smt.sql.GreaterThan;
-import org.vgu.se.smt.sql.IsNull;
-import org.vgu.se.smt.sql.LongValue;
-import org.vgu.se.smt.sql.Not;
-import org.vgu.se.smt.sql.SQL2MSFOL;
+import org.vgu.se.smt.ocl.OCL2MSFOL;
 
 /**************************************************************************
  * Copyright 2020 Vietnamese-German-University
@@ -49,9 +40,9 @@ public class Main {
 
         DM2MSFOL.setDataModel(dm);
         DM2MSFOL.map(fm);
-//        OCL2MSFOL.setDataModel(dm);
-//        OCL2MSFOL.setExpression("Student.allInstances()->isEmpty()");
-//        OCL2MSFOL.map(fm);
+        OCL2MSFOL.setDataModel(dm);
+        OCL2MSFOL.setExpression("Student.allInstances()->isEmpty()");
+        OCL2MSFOL.map(fm);
 
 //        
 //        fm.checkSat();

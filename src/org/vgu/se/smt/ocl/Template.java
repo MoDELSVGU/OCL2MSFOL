@@ -22,9 +22,9 @@ public class Template {
     public static class True {
         public static String oclIsUndefined = "or %s %s";
         public static String oclIsInvalid = "%s";
-        public static String oclIsTypeOf = "%s";
-        public static String oclIsKindOf = "%s";
-        public static String equality = "or (and %s %s) (and (= %s %s) (and (not (or %s %s %s %s))))";
+        public static String oclIsTypeOf = "OclIsTypeOf(%s,%s)";
+        public static String oclIsKindOf = "OclIsKindOf(%s,%s)";
+        public static String equality = "or (and %1$s %2$s) (and (= %3$s %4$s) (and (not (or %1$s %5$s %2$s %6$s))))";
         public static String inequality = "and (not (= %s %s)) (not (or %s %s %s %s))";
         public static String not = "%s";
         public static String and = "and %s %s";
@@ -39,10 +39,10 @@ public class Template {
     public static class False {
         public static String oclIsUndefined = "not (or %s %s)";
         public static String oclIsInvalid = "not %s";
-        public static String oclIsTypeOf = "not %s";
-        public static String oclIsKindOf = "not %s";
+        public static String oclIsTypeOf = "not OclIsTypeOf(%s,%s)";
+        public static String oclIsKindOf = "not OclIsKindOf(%s,%s)";
         public static String equality = "and (not (= %s %s)) (not (or %s %s %s %s))";
-        public static String inequality = "or (and %s %s) (and (= %s %s) (and (not (or %s %s %s %s))))";
+        public static String inequality = "or (and %1$s %2$s) (and (= %3$s %4$s) (and (not (or %1$s %5$s %2$s %6$s))))";
         public static String not = "%s";
         public static String and = "or %s %s";
         public static String or = "and %s %s";
@@ -62,9 +62,9 @@ public class Template {
         public static String equality = "false";
         public static String inequality = "false";
         public static String not = "%s";
-        public static String and = "or (and %s %s) (and %s %s) (and %s %s)";
-        public static String or = "or (and %s %s) (and %s %s) (and %s %s)";
-        public static String implies = "or (and %s (or %s %s %s)) (and %s (or %s %s %s))";
+        public static String and = "or (and %1$s %2$s) (and %1$s %3$s) (and %4$s %2$s)";
+        public static String or = "or (and %1$s %2$s) (and %1$s %3$s) (and %4$s %2$s)";
+        public static String implies = "or (and %1$s (or %3$s %2$s %4$s)) (and %2$s (or %5$s %1$s %6$s))";
         public static String isEmpty = "false";
         public static String notEmpty = "false";
         public static String forAll = "and (not %s) (exists ((%s %s))(and %s %s)) (forall ((%s %s))(=> %s (or %s %s)))";
@@ -84,11 +84,11 @@ public class Template {
         public static String oclIsInvalid = "false";
         public static String oclIsTypeOf = "false";
         public static String oclIsKindOf = "false";
-        public static String equality = "or (or %s %s) (and %s (not %s)) (and (not %s) %s)";
-        public static String inequality = "or (or %s %s) (and %s (not %s)) (and (not %s) %s)";
+        public static String equality = "or (or %3$s %4$s) (and %1$s (not %2$s)) (and (not %1$s) %2$s)";
+        public static String inequality = "or (or %3$s %4$s) (and %1$s (not %2$s)) (and (not %1$s) %2$s)";
         public static String not = "%s";
-        public static String and = "or (and %s (or %s %s %s)) (and %s (or %s %s %s))";
-        public static String or = "or (and %s (or %s %s %s)) (and %s (or %s %s %s))";
+        public static String and = "or (and %1$s (or %3$s %4$s %2$s)) (and %2$s (or %5$s %6$s %1$s))";
+        public static String or = "or (and %1$s (or %3$s %4$s %2$s)) (and %2$s (or %5$s %6$s %1$s))";
         public static String implies = "or %s %s";
         public static String isEmpty = "%s";
         public static String notEmpty = "%s";
