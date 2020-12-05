@@ -67,7 +67,7 @@ public class Template {
         public static String implies = "or (and %1$s (or %3$s %2$s %4$s)) (and %2$s (or %5$s %1$s %6$s))";
         public static String isEmpty = "false";
         public static String notEmpty = "false";
-        public static String forAll = "and (not %s) (exists ((%s %s))(and %s %s)) (forall ((%s %s))(=> %s (or %s %s)))";
+        public static String forAll = "and (not %1$s) (exists ((%2$s %3$s))(and %4$s %5$s)) (forall ((%2$s %3$s))(=> %4$s (or %6$s %5$s)))";
         public static String exists = "and (not %s) (exists ((%s %s))(and %s %s)) (forall ((%s %s))(=> %s (or %s %s)))";
         // Non-boolean expressions
         public static String intLiteral = "false";

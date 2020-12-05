@@ -17,8 +17,11 @@ limitations under the License.
 
 package org.vgu.se.smt.ocl;
 
+import java.util.List;
+
 import org.vgu.dm2schema.dm.DataModel;
 
+import com.vgu.se.jocl.expressions.Variable;
 import com.vgu.se.jocl.visit.ParserVisitor;
 
 public abstract class OCL2MSFOLVisitor implements ParserVisitor {
@@ -47,4 +50,20 @@ public abstract class OCL2MSFOLVisitor implements ParserVisitor {
         this.fol = fol;
     }
 
+    protected String app(String folFormulae, List<Variable> fvExp, String var) {
+        String output = folFormulae;
+        for (Variable v : fvExp) {
+            output = output.concat("_").concat(v.getName());
+        }
+        output = output.concat("_").concat(var);
+        return output;
+    }
+    
+    protected String nullOf(String type) {
+        return "null".concat(type.substring(0, 1).toUpperCase()).concat(type.substring(1));
+    }
+    
+    protected String invalidOf(String type) {
+        return "invalid".concat(type.substring(0, 1).toUpperCase()).concat(type.substring(1));
+    }
 }

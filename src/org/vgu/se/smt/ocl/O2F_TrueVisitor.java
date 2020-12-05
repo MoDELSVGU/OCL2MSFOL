@@ -26,16 +26,15 @@ import com.vgu.se.jocl.expressions.BooleanLiteralExp;
 import com.vgu.se.jocl.expressions.Expression;
 import com.vgu.se.jocl.expressions.IntegerLiteralExp;
 import com.vgu.se.jocl.expressions.IteratorExp;
+import com.vgu.se.jocl.expressions.IteratorKind;
 import com.vgu.se.jocl.expressions.LiteralExp;
+import com.vgu.se.jocl.expressions.OclExp;
 import com.vgu.se.jocl.expressions.OperationCallExp;
 import com.vgu.se.jocl.expressions.PropertyCallExp;
-import com.vgu.se.jocl.expressions.RealLiteralExp;
 import com.vgu.se.jocl.expressions.StringLiteralExp;
 import com.vgu.se.jocl.expressions.TypeExp;
 import com.vgu.se.jocl.expressions.Variable;
 import com.vgu.se.jocl.expressions.VariableExp;
-import com.vgu.se.jocl.expressions.sql.functions.SqlFnCurdate;
-import com.vgu.se.jocl.expressions.sql.functions.SqlFnTimestampdiff;
 import com.vgu.se.jocl.utils.VariableUtils;
 
 public class O2F_TrueVisitor extends OCL2MSFOLVisitor {
@@ -52,8 +51,116 @@ public class O2F_TrueVisitor extends OCL2MSFOLVisitor {
 
     @Override
     public void visit(IteratorExp iteratorExp) {
-        // TODO Auto-generated method stub
+        switch (IteratorKind.valueOf(iteratorExp.getKind())) {
+        case any:
+            break;
+        case asBag:
+            break;
+        case asOrderedSet:
+            break;
+        case asSequence:
+            break;
+        case asSet:
+            break;
+        case at:
+            break;
+        case collect:
+            break;
+        case count:
+            break;
+        case excludes:
+            break;
+        case excludesAll:
+            break;
+        case excluding:
+            break;
+        case exists:
+            String template = Template.True.exists;
 
+            String var = iteratorExp.getIterator().getName();
+            String type = "Classifier";
+
+            OclExp sourceExp = (OclExp) iteratorExp.getSource();
+            List<Variable> fVarsSrc = VariableUtils.FVars(sourceExp);
+            evalVisitor = new O2F_EvalVisitor(dm);
+            sourceExp.accept(evalVisitor);
+            String firstArgument = app(evalVisitor.getFOLFormulae(), fVarsSrc,
+                var);
+
+            Expression bodyExp = iteratorExp.getBody();
+            trueVisitor = new O2F_TrueVisitor(dm);
+            bodyExp.accept(trueVisitor);
+            String secondArgument = trueVisitor.getFOLFormulae();
+
+            invalVisitor = new O2F_InvalidVisitor(dm);
+            sourceExp.accept(invalVisitor);
+            String thirdArgument = invalVisitor.getFOLFormulae();
+
+            this.setFOLFormulae(String.format(template, var, type,
+                firstArgument, secondArgument, thirdArgument));
+            break;
+        case first:
+            break;
+        case flatten:
+            break;
+        case forAll:
+            template = Template.True.forAll;
+
+            var = iteratorExp.getIterator().getName();
+            type = "Classifier";
+
+            sourceExp = (OclExp) iteratorExp.getSource();
+            fVarsSrc = VariableUtils.FVars(sourceExp);
+            evalVisitor = new O2F_EvalVisitor(dm);
+            sourceExp.accept(evalVisitor);
+            firstArgument = app(evalVisitor.getFOLFormulae(), fVarsSrc,
+                var);
+
+            bodyExp = iteratorExp.getBody();
+            trueVisitor = new O2F_TrueVisitor(dm);
+            bodyExp.accept(trueVisitor);
+            secondArgument = trueVisitor.getFOLFormulae();
+
+            invalVisitor = new O2F_InvalidVisitor(dm);
+            sourceExp.accept(invalVisitor);
+            thirdArgument = invalVisitor.getFOLFormulae();
+
+            this.setFOLFormulae(String.format(template, var, type,
+                firstArgument, secondArgument, thirdArgument));
+            break;
+        case includes:
+            break;
+        case includesAll:
+            break;
+        case including:
+            break;
+        case indexOf:
+            break;
+        case isEmpty:
+            break;
+        case isUnique:
+            break;
+        case last:
+            break;
+        case notEmpty:
+            break;
+        case one:
+            break;
+        case reject:
+            break;
+        case select:
+            break;
+        case size:
+            break;
+        case sortedBy:
+            break;
+        case sum:
+            break;
+        case union:
+            break;
+        default:
+            break;
+        }
     }
 
     @Override
@@ -231,16 +338,43 @@ public class O2F_TrueVisitor extends OCL2MSFOLVisitor {
             break;
         case "isEmpty":
             template = Template.True.isEmpty;
-            
+
             exp = operationCallExp.getSource();
             String var = "x";
             String type = "Classifier";
-            
+
             evalVisitor = new O2F_EvalVisitor(dm);
-            
+
             List<Variable> fvExp = VariableUtils.FVars(exp);
-            
+
+            firstArgument = app(evalVisitor.getFOLFormulae(), fvExp, var);
+
+            invalVisitor = new O2F_InvalidVisitor(dm);
+            exp.accept(invalVisitor);
+            secondArgument = invalVisitor.getFOLFormulae();
+
+            this.setFOLFormulae(String.format(template, var, type,
+                firstArgument, secondArgument));
+            break;
         case "notEmpty":
+            template = Template.True.isEmpty;
+
+            exp = operationCallExp.getSource();
+            var = "x";
+            type = "Classifier";
+
+            evalVisitor = new O2F_EvalVisitor(dm);
+
+            fvExp = VariableUtils.FVars(exp);
+
+            firstArgument = app(evalVisitor.getFOLFormulae(), fvExp, var);
+
+            invalVisitor = new O2F_InvalidVisitor(dm);
+            exp.accept(invalVisitor);
+            secondArgument = invalVisitor.getFOLFormulae();
+
+            this.setFOLFormulae(String.format(template, var, type,
+                firstArgument, secondArgument));
             break;
         case "isUnique":
             break;

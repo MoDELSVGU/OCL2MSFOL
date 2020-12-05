@@ -24,14 +24,12 @@ import com.vgu.se.jocl.expressions.BooleanLiteralExp;
 import com.vgu.se.jocl.expressions.Expression;
 import com.vgu.se.jocl.expressions.IntegerLiteralExp;
 import com.vgu.se.jocl.expressions.IteratorExp;
+import com.vgu.se.jocl.expressions.IteratorKind;
 import com.vgu.se.jocl.expressions.LiteralExp;
 import com.vgu.se.jocl.expressions.OperationCallExp;
 import com.vgu.se.jocl.expressions.PropertyCallExp;
-import com.vgu.se.jocl.expressions.RealLiteralExp;
 import com.vgu.se.jocl.expressions.StringLiteralExp;
 import com.vgu.se.jocl.expressions.VariableExp;
-import com.vgu.se.jocl.expressions.sql.functions.SqlFnCurdate;
-import com.vgu.se.jocl.expressions.sql.functions.SqlFnTimestampdiff;
 
 public class O2F_InvalidVisitor extends OCL2MSFOLVisitor {
 
@@ -47,17 +45,81 @@ public class O2F_InvalidVisitor extends OCL2MSFOLVisitor {
 
     @Override
     public void visit(IteratorExp iteratorExp) {
-        // TODO Auto-generated method stub
-
+        switch (IteratorKind.valueOf(iteratorExp.getKind())) {
+        case any:
+            break;
+        case asBag:
+            break;
+        case asOrderedSet:
+            break;
+        case asSequence:
+            break;
+        case asSet:
+            break;
+        case at:
+            break;
+        case collect:
+            break;
+        case count:
+            break;
+        case excludes:
+            break;
+        case excludesAll:
+            break;
+        case excluding:
+            break;
+        case exists:
+            break;
+        case first:
+            break;
+        case flatten:
+            break;
+        case forAll:
+            break;
+        case includes:
+            break;
+        case includesAll:
+            break;
+        case including:
+            break;
+        case indexOf:
+            break;
+        case isEmpty:
+            break;
+        case isUnique:
+            break;
+        case last:
+            break;
+        case notEmpty:
+            break;
+        case one:
+            break;
+        case reject:
+            break;
+        case select:
+            break;
+        case size:
+            break;
+        case sortedBy:
+            break;
+        case sum:
+            break;
+        case union:
+            break;
+        default:
+            break;
+        }
     }
 
     @Override
     public void visit(OperationCallExp operationCallExp) {
         switch (operationCallExp.getReferredOperation().getName()) {
         case "allInstances":
+            String template = Template.Invalid.allInstances;
+            this.setFOLFormulae(template);
             break;
         case "oclIsUndefined":
-            String template = Template.Invalid.oclIsUndefined;
+            template = Template.Invalid.oclIsUndefined;
             this.setFOLFormulae(template);
             break;
         case "oclIsInvalid":
@@ -193,8 +255,20 @@ public class O2F_InvalidVisitor extends OCL2MSFOLVisitor {
         case "size":
             break;
         case "isEmpty":
+            template = Template.Invalid.isEmpty;
+            exp = operationCallExp.getSource();
+            invalVisitor = new O2F_InvalidVisitor(dm);
+            exp.accept(invalVisitor);
+            this.setFOLFormulae(
+                String.format(template, invalVisitor.getFOLFormulae()));
             break;
         case "notEmpty":
+            template = Template.Invalid.notEmpty;
+            exp = operationCallExp.getSource();
+            invalVisitor = new O2F_InvalidVisitor(dm);
+            exp.accept(invalVisitor);
+            this.setFOLFormulae(
+                String.format(template, invalVisitor.getFOLFormulae()));
             break;
         case "isUnique":
             break;
@@ -225,14 +299,24 @@ public class O2F_InvalidVisitor extends OCL2MSFOLVisitor {
 
     @Override
     public void visit(IntegerLiteralExp integerLiteralExp) {
-        // TODO Auto-generated method stub
-
+        String template = Template.Invalid.intLiteral;
+        this.setFOLFormulae(template);
     }
 
     @Override
     public void visit(PropertyCallExp propertyCallExp) {
-        // TODO Auto-generated method stub
+        String template = Template.Invalid.attribute;
 
+        Expression exp = propertyCallExp.getNavigationSource();
+
+        nullVisitor = new O2F_NullVisitor(dm);
+        exp.accept(nullVisitor);
+
+        invalVisitor = new O2F_InvalidVisitor(dm);
+        exp.accept(invalVisitor);
+
+        this.setFOLFormulae(String.format(template,
+            nullVisitor.getFOLFormulae(), invalVisitor.getFOLFormulae()));
     }
 
     @Override
@@ -243,7 +327,9 @@ public class O2F_InvalidVisitor extends OCL2MSFOLVisitor {
 
     @Override
     public void visit(VariableExp variableExp) {
-        // TODO Auto-generated method stub
-
+        String template = Template.Invalid.variable;
+        String var = variableExp.getVariable().getName();
+        String type = variableExp.getType().getReferredType();
+        this.setFOLFormulae(String.format(template, var, invalidOf(type)));
     }
 }
