@@ -1,3 +1,6 @@
+#CVC4 engine
+resources/cvc4.exe
+
 # MAVEN
 target/
 pom.xml.tag
