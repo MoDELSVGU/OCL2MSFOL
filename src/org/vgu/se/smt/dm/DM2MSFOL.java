@@ -28,53 +28,56 @@ import org.vgu.dm2schema.dm.Association;
 import org.vgu.dm2schema.dm.Attribute;
 import org.vgu.dm2schema.dm.DataModel;
 import org.vgu.dm2schema.dm.Entity;
+import org.vgu.dm2schema.dm.Invariant;
+import org.vgu.dm2schema.dm.Invariants;
 import org.vgu.se.smt.file.FileManager;
+import org.vgu.se.smt.ocl.OCL2MSFOL;
 
 public class DM2MSFOL {
 
     private static class Template {
         public static String ENTITY = "(declare-fun %s (Classifier) Bool)";
-        public static String ENTITY_1 = "(assert (not (%s nullClassifier)))";
-        public static String ENTITY_1_BIS = "(assert (not (%s invalidClassifier)))";
+        public static String ENTITY_1 = "(not (%s nullClassifier))";
+        public static String ENTITY_1_BIS = "(not (%s invalidClassifier))";
         public static String ATTRIBUTE = "(declare-fun %s_%s (Classifier) %s)";
-        public static String ATTRIBUTE_1 = "(assert (= (%s_%s nullClassifier) invalid%s))";
-        public static String ATTRIBUTE_1_BIS = "(assert (= (%s_%s invalidClassifier) invalid%s))";
-        public static String ATTRIBUTE_2 = "(assert (forall ((x Classifier))\r\n"
-            + "    (=> %s\r\n" + "        (distinct (%s_%s x) invalid%s))))";
+        public static String ATTRIBUTE_1 = "(= (%s_%s nullClassifier) invalid%s)";
+        public static String ATTRIBUTE_1_BIS = "(= (%s_%s invalidClassifier) invalid%s)";
+        public static String ATTRIBUTE_2 = "(forall ((x Classifier))\r\n"
+            + "    (=> %s\r\n" + "        (distinct (%s_%s x) invalid%s)))";
         public static String ASSOCIATION = "(declare-fun %s_%s (Classifier Classifier) Bool)";
-        public static String ASSOCIATION_1 = "(assert (forall ((x Classifier))\r\n"
+        public static String ASSOCIATION_1 = "(forall ((x Classifier))\r\n"
             + "    (forall ((y Classifier)) \r\n"
-            + "        (=> (%s_%s x y) \r\n" + "            (and %s %s)))))";
-        public static String ENTITY_2 = "(assert (forall ((x Classifier)) \r\n"
-            + "    (=> (%s x) (not %s))))";
+            + "        (=> (%s_%s x y) \r\n" + "            (and %s %s))))";
+        public static String ENTITY_2 = "(forall ((x Classifier)) \r\n"
+            + "    (=> (%s x) (not %s)))";
         public static String ENTITY_3 = "(declare-const %sType Type)";
-        public static String ENTITY_3_BIS = "(assert (distinct %sType %sType))";
-        public static String ENTITY_4 = "(assert (forall ((x Classifier))\r\n"
+        public static String ENTITY_3_BIS = "(distinct %sType %sType)";
+        public static String ENTITY_4 = "(forall ((x Classifier))\r\n"
             + "    (and (=> (%1$s x)\r\n"
             + "             (OclIsTypeOf x %1$sType))\r\n"
             + "         (=> (OclIsTypeOf x %1$sType)\r\n"
-            + "             (%1$s x)))))";
-        public static String ENTITY_5 = "(assert (forall ((x Classifier))\r\n"
+            + "             (%1$s x))))";
+        public static String ENTITY_5 = "(forall ((x Classifier))\r\n"
             + "    (and (=> %1$s\r\n"
             + "             (OclIsKindOf x %2$sType))\r\n"
             + "         (=> (OclIsKindOf x %2$sType)\r\n"
-            + "             %1$s))))";
+            + "             %1$s)))";
         public static String ASSOCIATION_2 = "(declare-fun %s_%s (Classifier) Classifier)";
-        public static String ASSOCIATION_3 = "(assert (= (%s_%s nullClassifier) invalidClassifier))";
-        public static String ASSOCIATION_3_BIS = "(assert (= (%s_%s invalidClassifier) invalidClassifier))";
-        public static String ASSOCIATION_4 = "(assert (forall ((x Classifier))\r\n"
+        public static String ASSOCIATION_3 = "(= (%s_%s nullClassifier) invalidClassifier)";
+        public static String ASSOCIATION_3_BIS = "(= (%s_%s invalidClassifier) invalidClassifier)";
+        public static String ASSOCIATION_4 = "(forall ((x Classifier))\r\n"
             + "    (=> (%4$s x)\r\n"
             + "        (or (= (%1$s_%2$s x) nullClassifier)\r\n"
-            + "            (%3$s (%1$s_%2$s x))))))";
-        public static String ASSOCIATION_5 = "(assert (forall ((x Classifier))\r\n"
+            + "            (%3$s (%1$s_%2$s x)))))";
+        public static String ASSOCIATION_5 = "(forall ((x Classifier))\r\n"
             + "    (forall ((y Classifier))\r\n"
             + "        (=> (and (%1$s x)\r\n" + "                 (%2$s y)\r\n"
             + "                 (= (%2$s_%3$s y) x))\r\n"
-            + "            (%1$s_%4$s x y)))))";
-        public static String ASSOCIATION_6 = "(assert (forall ((x Classifier))\r\n"
+            + "            (%1$s_%4$s x y))))";
+        public static String ASSOCIATION_6 = "(forall ((x Classifier))\r\n"
             + "    (forall ((y Classifier))\r\n"
             + "        (=> (%1$s_%2$s x y)\r\n"
-            + "            (= (%3$s_%4$s y) x)))))";
+            + "            (= (%3$s_%4$s y) x))))";
     }
 
     public static DataModel dm;
@@ -92,7 +95,7 @@ public class DM2MSFOL {
         }
         for (Entity e : dm.getEntities().values()) {
             fileManager.writeln(String.format(Template.ENTITY, e.getName()));
-            fileManager.writeln(String.format(Template.ENTITY_1, e.getName()));
+            fileManager.assertln(String.format(Template.ENTITY_1, e.getName()));
             if (!fileManager.isSafeMode()) {
                 fileManager
                     .writeln(String.format(Template.ENTITY_3, e.getName()));
@@ -101,21 +104,21 @@ public class DM2MSFOL {
         for (Entity e : dm.getEntities().values()) {
             if (!fileManager.isSafeMode())
                 fileManager
-                    .writeln(String.format(Template.ENTITY_1_BIS, e.getName()));
+                    .assertln(String.format(Template.ENTITY_1_BIS, e.getName()));
             for (Attribute at : e.getAttributes()) {
                 fileManager.writeln(String.format(Template.ATTRIBUTE,
                     at.getName(), e.getName(),
                     at.getType().compareTo("String") == 0 ? "String" : "Int"));
                 if (!fileManager.isSafeMode()) {
-                    fileManager.writeln(String.format(Template.ATTRIBUTE_1,
+                    fileManager.assertln(String.format(Template.ATTRIBUTE_1,
                         at.getName(), e.getName(),
                         at.getType().compareTo("String") == 0 ? "String"
                             : "Int"));
-                    fileManager.writeln(String.format(Template.ATTRIBUTE_1_BIS,
+                    fileManager.assertln(String.format(Template.ATTRIBUTE_1_BIS,
                         at.getName(), e.getName(),
                         at.getType().compareTo("String") == 0 ? "String"
                             : "Int"));
-                    fileManager.writeln(String.format(Template.ATTRIBUTE_2,
+                    fileManager.assertln(String.format(Template.ATTRIBUTE_2,
                         getGeneralizationFormulae(e), at.getName(),
                         e.getName(),
                         at.getType().compareTo("String") == 0 ? "String"
@@ -125,13 +128,13 @@ public class DM2MSFOL {
             if (!fileManager.isSafeMode()) {
                 for (Entity _e : dm.getEntities().values()) {
                     if (e != _e) {
-                        fileManager.writeln(String.format(Template.ENTITY_3_BIS,
+                        fileManager.assertln(String.format(Template.ENTITY_3_BIS,
                             e.getName(), _e.getName()));
                     }
                 }
                 fileManager
-                    .writeln(String.format(Template.ENTITY_4, e.getName()));
-                fileManager.writeln(String.format(Template.ENTITY_5,
+                    .assertln(String.format(Template.ENTITY_4, e.getName()));
+                fileManager.assertln(String.format(Template.ENTITY_5,
                     getGeneralizationFormulae(e), e.getName()));
             }
 
@@ -140,7 +143,7 @@ public class DM2MSFOL {
             if (as.isManyToMany()) {
                 fileManager.writeln(String.format(Template.ASSOCIATION,
                     as.getLeftEnd(), as.getRightEnd()));
-                fileManager.writeln(String.format(Template.ASSOCIATION_1,
+                fileManager.assertln(String.format(Template.ASSOCIATION_1,
                     as.getLeftEnd(), as.getRightEnd(),
                     fileManager.isSafeMode()
                         ? String.format("(%s x)", as.getLeftEntityName())
@@ -154,20 +157,20 @@ public class DM2MSFOL {
                 fileManager.writeln(String.format(Template.ASSOCIATION_2,
                     as.getOneEnd().getCurrentClass(),
                     as.getOneEnd().getName()));
-                fileManager.writeln(String.format(Template.ASSOCIATION_3,
+                fileManager.assertln(String.format(Template.ASSOCIATION_3,
                     as.getOneEnd().getCurrentClass(),
                     as.getOneEnd().getName()));
-                fileManager.writeln(String.format(Template.ASSOCIATION_3_BIS,
+                fileManager.assertln(String.format(Template.ASSOCIATION_3_BIS,
                     as.getOneEnd().getCurrentClass(),
                     as.getOneEnd().getName()));
-                fileManager.writeln(String.format(Template.ASSOCIATION_4,
+                fileManager.assertln(String.format(Template.ASSOCIATION_4,
                     as.getOneEnd().getCurrentClass(), as.getOneEnd().getName(),
                     as.getOneEnd().getTargetClass(),
                     as.getOneEnd().getCurrentClass()));
                 fileManager.writeln(String.format(Template.ASSOCIATION,
                     as.getManyEnd().getCurrentClass(),
                     as.getManyEnd().getName()));
-                fileManager.writeln(String.format(Template.ASSOCIATION_1,
+                fileManager.assertln(String.format(Template.ASSOCIATION_1,
                     as.getManyEnd().getCurrentClass(),
                     as.getManyEnd().getName(),
                     fileManager.isSafeMode()
@@ -180,11 +183,11 @@ public class DM2MSFOL {
                             as.getManyEnd().getTargetClass())
                         : getGeneralizationFormulae(dm.getEntities()
                             .get(as.getManyEnd().getTargetClass()))));
-                fileManager.writeln(String.format(Template.ASSOCIATION_5,
+                fileManager.assertln(String.format(Template.ASSOCIATION_5,
                     as.getManyEnd().getCurrentClass(),
                     as.getManyEnd().getTargetClass(), as.getManyEnd().getOpp(),
                     as.getManyEnd().getName()));
-                fileManager.writeln(String.format(Template.ASSOCIATION_6,
+                fileManager.assertln(String.format(Template.ASSOCIATION_6,
                     as.getManyEnd().getCurrentClass(),
                     as.getManyEnd().getName(), as.getManyEnd().getTargetClass(),
                     as.getManyEnd().getOpp()));
@@ -204,7 +207,7 @@ public class DM2MSFOL {
             } else if (exclusion.size() == 1) {
                 String s = String.format("(%s x)", exclusion.get(0).getName());
                 fileManager
-                    .writeln(String.format(Template.ENTITY_2, e.getName(), s));
+                    .assertln(String.format(Template.ENTITY_2, e.getName(), s));
             } else {
                 String s = "";
                 for (Entity e_ : exclusion) {
@@ -212,7 +215,21 @@ public class DM2MSFOL {
                 }
                 String s_ = String.format("(or%s)", s);
                 fileManager
-                    .writeln(String.format(Template.ENTITY_2, e.getName(), s_));
+                    .assertln(String.format(Template.ENTITY_2, e.getName(), s_));
+            }
+        }
+        
+        OCL2MSFOL.setDataModel(dm);
+        
+        for (Invariants invs : dm.getInvariants()) {
+            for(Invariant inv : invs) {
+                String invLabel = inv.getLabel();
+                String invOcl = inv.getOcl();
+                System.out.println(invLabel);
+                System.out.println(invOcl);
+                OCL2MSFOL.setExpression(invOcl);
+                fileManager.commentln(invLabel);
+                OCL2MSFOL.map(fileManager);
             }
         }
     }

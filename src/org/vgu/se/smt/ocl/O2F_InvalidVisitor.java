@@ -26,6 +26,8 @@ import com.vgu.se.jocl.expressions.IntegerLiteralExp;
 import com.vgu.se.jocl.expressions.IteratorExp;
 import com.vgu.se.jocl.expressions.IteratorKind;
 import com.vgu.se.jocl.expressions.LiteralExp;
+import com.vgu.se.jocl.expressions.M2OAssociationClassCallExp;
+import com.vgu.se.jocl.expressions.O2OAssociationClassCallExp;
 import com.vgu.se.jocl.expressions.OperationCallExp;
 import com.vgu.se.jocl.expressions.PropertyCallExp;
 import com.vgu.se.jocl.expressions.StringLiteralExp;
@@ -85,12 +87,24 @@ public class O2F_InvalidVisitor extends OCL2MSFOLVisitor {
         case indexOf:
             break;
         case isEmpty:
+            String template = Template.Invalid.isEmpty;
+            Expression exp = iteratorExp.getSource();
+            invalVisitor = new O2F_InvalidVisitor(dm);
+            exp.accept(invalVisitor);
+            this.setFOLFormulae(
+                String.format(template, invalVisitor.getFOLFormulae()));
             break;
         case isUnique:
             break;
         case last:
             break;
         case notEmpty:
+            template = Template.Invalid.notEmpty;
+            exp = iteratorExp.getSource();
+            invalVisitor = new O2F_InvalidVisitor(dm);
+            exp.accept(invalVisitor);
+            this.setFOLFormulae(
+                String.format(template, invalVisitor.getFOLFormulae()));
             break;
         case one:
             break;
@@ -321,8 +335,24 @@ public class O2F_InvalidVisitor extends OCL2MSFOLVisitor {
 
     @Override
     public void visit(AssociationClassCallExp associationClassCallExp) {
-        // TODO Auto-generated method stub
-
+        if (associationClassCallExp instanceof O2OAssociationClassCallExp) {
+            String template = Template.Invalid.association_0_1_arity;
+            Expression exp = associationClassCallExp.getNavigationSource();
+            nullVisitor = new O2F_NullVisitor(dm);
+            exp.accept(nullVisitor);
+            invalVisitor = new O2F_InvalidVisitor(dm);
+            exp.accept(invalVisitor);
+            this.setFOLFormulae(String.format(template, nullVisitor.getFOLFormulae(), invalVisitor.getFOLFormulae()));
+        } else if (associationClassCallExp instanceof M2OAssociationClassCallExp 
+            && ((M2OAssociationClassCallExp) associationClassCallExp).isOneEndAssociationCall()) {
+            String template = Template.Invalid.association_0_1_arity;
+            Expression exp = associationClassCallExp.getNavigationSource();
+            nullVisitor = new O2F_NullVisitor(dm);
+            exp.accept(nullVisitor);
+            invalVisitor = new O2F_InvalidVisitor(dm);
+            exp.accept(invalVisitor);
+            this.setFOLFormulae(String.format(template, nullVisitor.getFOLFormulae(), invalVisitor.getFOLFormulae()));
+        }
     }
 
     @Override

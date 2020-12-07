@@ -25,6 +25,8 @@ public final class FileManager {
     private static FileWriter fileWriter;
     private static final FileManager INSTANCE = new FileManager();
     private boolean safeMode = true;
+    private static String azzert = "(assert %s)";
+    private static String comment = "; %s";
     
     private FileManager() {}
 
@@ -38,6 +40,16 @@ public final class FileManager {
     
     public void open() throws IOException {
         fileWriter = new FileWriter(fileName);
+    }
+    
+    public void assertln(String content) throws IOException {
+        String newContent = String.format(azzert, content);
+        writeln(newContent);
+    }
+    
+    public void commentln(String content) throws IOException {
+        String newContent = String.format(comment, content);
+        writeln(newContent);
     }
     
     public void writeln(String content) throws IOException {
@@ -57,9 +69,9 @@ public final class FileManager {
         if(!safeMode) writeln("(declare-const invalidInt Int)");
         writeln("(declare-const nullString String)");
         if(!safeMode) writeln("(declare-const invalidString String)");
-        if(!safeMode) writeln("(assert (distinct nullClassifier invalidClassifier))");
-        if(!safeMode) writeln("(assert (distinct nullInt invalidInt))");
-        if(!safeMode) writeln("(assert (distinct nullString invalidString))");
+        if(!safeMode) assertln("(distinct nullClassifier invalidClassifier)");
+        if(!safeMode) assertln("(distinct nullInt invalidInt)");
+        if(!safeMode) assertln("(distinct nullString invalidString)");
     }
 
     public void checkSat() throws IOException {

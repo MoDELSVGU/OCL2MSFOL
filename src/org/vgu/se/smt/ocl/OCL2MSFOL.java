@@ -23,23 +23,9 @@ import java.io.IOException;
 import org.vgu.dm2schema.dm.DataModel;
 import org.vgu.se.smt.file.FileManager;
 
-import com.vgu.se.jocl.exception.OclParserException;
-import com.vgu.se.jocl.expressions.AssociationClassCallExp;
-import com.vgu.se.jocl.expressions.BooleanLiteralExp;
 import com.vgu.se.jocl.expressions.Expression;
-import com.vgu.se.jocl.expressions.IntegerLiteralExp;
-import com.vgu.se.jocl.expressions.IteratorExp;
-import com.vgu.se.jocl.expressions.LiteralExp;
 import com.vgu.se.jocl.expressions.OclExp;
-import com.vgu.se.jocl.expressions.OperationCallExp;
-import com.vgu.se.jocl.expressions.PropertyCallExp;
-import com.vgu.se.jocl.expressions.RealLiteralExp;
-import com.vgu.se.jocl.expressions.StringLiteralExp;
-import com.vgu.se.jocl.expressions.VariableExp;
-import com.vgu.se.jocl.expressions.sql.functions.SqlFnCurdate;
-import com.vgu.se.jocl.expressions.sql.functions.SqlFnTimestampdiff;
 import com.vgu.se.jocl.parser.simple.SimpleParser;
-import com.vgu.se.jocl.visit.ParserVisitor;
 
 public class OCL2MSFOL {
 
@@ -51,8 +37,6 @@ public class OCL2MSFOL {
         Expression exp_ = simpleParser.parse(string, dm);
         if (exp_ instanceof OclExp)
             exp = (OclExp) exp_;
-        throw new OclParserException(
-            "The OCL expression cannot be parsed! Maybe there is an error with it?");
     }
 
     public static void setDataModel(DataModel dm_) {
@@ -62,6 +46,6 @@ public class OCL2MSFOL {
     public static void map(FileManager fm) throws IOException {
         O2F_TrueVisitor visitor = new O2F_TrueVisitor(dm);
         exp.accept(visitor);
-        fm.writeln(visitor.getFOLFormulae());
+        fm.assertln(visitor.getFOLFormulae());
     }
 }

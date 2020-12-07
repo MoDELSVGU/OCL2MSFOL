@@ -56,6 +56,40 @@
 				"opp": "lecturers",
 				"mult": "*"
 			}
+		],
+		"attributes": [
+			{
+				"name": "salary",
+				"type": "Integer"
+			}
+		]
+	},
+	{
+		"invariants": [
+			{
+				"label": "There is at least one student",
+				"ocl": "Student.allInstances()->notEmpty()"
+			},
+			{
+				"label": "There is at least one lecturer",
+				"ocl": "not Lecturer.allInstances()->isEmpty()"
+			},
+			{
+				"label": "All lecturers must have a salary",
+				"ocl": "Lecturer.allInstances()->forAll(l|not (l.salary.oclIsUndefined() or l.salary.oclIsInvalid()))"
+			},
+			{
+				"label": "All salary must be positive",
+				"ocl": "Lecturer.allInstances()->forAll(l|l.salary <> 0)"
+			},
+			{
+				"label": "All names must be unique",
+				"ocl": "Reg_User.allInstances()->forAll(ru1|Reg_User.allInstances()->forAll(ru2|(ru1.name = ru2.name) implies (ru1 = ru2)))"
+			},
+			{
+				"label": "Something conflict: There exists a salary that is equal to zero",
+				"ocl": "Lecturer.allInstances()->exists(l|l.salary = 0)"
+			}
 		]
 	}
 ]

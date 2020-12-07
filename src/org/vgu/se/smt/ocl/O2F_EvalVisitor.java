@@ -15,10 +15,11 @@ limitations under the License.
 @author: ngpbh
 ***************************************************************************/
 
-
 package org.vgu.se.smt.ocl;
 
+import org.vgu.dm2schema.dm.Attribute;
 import org.vgu.dm2schema.dm.DataModel;
+import org.vgu.dm2schema.dm.Entity;
 
 import com.vgu.se.jocl.expressions.AssociationClassCallExp;
 import com.vgu.se.jocl.expressions.BooleanLiteralExp;
@@ -26,16 +27,15 @@ import com.vgu.se.jocl.expressions.Expression;
 import com.vgu.se.jocl.expressions.IntegerLiteralExp;
 import com.vgu.se.jocl.expressions.IteratorExp;
 import com.vgu.se.jocl.expressions.LiteralExp;
+import com.vgu.se.jocl.expressions.M2OAssociationClassCallExp;
+import com.vgu.se.jocl.expressions.O2OAssociationClassCallExp;
 import com.vgu.se.jocl.expressions.OperationCallExp;
 import com.vgu.se.jocl.expressions.PropertyCallExp;
-import com.vgu.se.jocl.expressions.RealLiteralExp;
 import com.vgu.se.jocl.expressions.StringLiteralExp;
 import com.vgu.se.jocl.expressions.VariableExp;
-import com.vgu.se.jocl.expressions.sql.functions.SqlFnCurdate;
-import com.vgu.se.jocl.expressions.sql.functions.SqlFnTimestampdiff;
 
 public class O2F_EvalVisitor extends OCL2MSFOLVisitor {
-    
+
     public O2F_EvalVisitor(DataModel dm) {
         this.dm = dm;
     }
@@ -43,60 +43,135 @@ public class O2F_EvalVisitor extends OCL2MSFOLVisitor {
     @Override
     public void visit(Expression exp) {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
     public void visit(IteratorExp iteratorExp) {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
     public void visit(OperationCallExp operationCallExp) {
-        // TODO Auto-generated method stub
-        
+        switch (operationCallExp.getReferredOperation().getName()) {
+        case "allInstances":
+            String template = Template.Eval.allInstances;
+            String clazz = operationCallExp.getSource().getType()
+                .getReferredType();
+            this.setFOLFormulae(String.format(template, clazz, "%s"));
+            break;
+        case "oclIsUndefined":
+            break;
+        case "oclIsKindOf":
+            break;
+        case "oclIsTypeOf":
+            break;
+        case "oclAsType":
+            break;
+        case "=":
+        case "<>":
+        case "<=":
+        case ">=":
+        case ">":
+        case "<":
+        case "and":
+        case "or":
+            break;
+        case "not":
+            break;
+        case "implies":
+            break;
+        case "size":
+            break;
+        case "isEmpty":
+            break;
+        case "notEmpty":
+            break;
+        case "isUnique":
+            break;
+        case "flatten":
+            break;
+        default:
+            break;
+        }
     }
 
     @Override
     public void visit(LiteralExp literalExp) {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
     public void visit(StringLiteralExp stringLiteralExp) {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
     public void visit(BooleanLiteralExp booleanLiteralExp) {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
     public void visit(IntegerLiteralExp integerLiteralExp) {
-        // TODO Auto-generated method stub
-        
+        String template = Template.Eval.intLiteral;
+        this.setFOLFormulae(String.format(template,
+            Integer.toString(integerLiteralExp.getValue())));
     }
 
     @Override
     public void visit(PropertyCallExp propertyCallExp) {
-        // TODO Auto-generated method stub
-        
+        String property = propertyCallExp.getReferredProperty();
+        String clazz = null;
+        for (Entity e : dm.getEntities().values()) {
+            for (Attribute att : e.getAttributes()) {
+                if (att.getName().equals(property)) {
+                    clazz = e.getName();
+                }
+            }
+        }
+        evalVisitor = new O2F_EvalVisitor(dm);
+        Expression exp = propertyCallExp.getNavigationSource();
+        exp.accept(evalVisitor);
+        String template = Template.Eval.attribute;
+        this.setFOLFormulae(String.format(template, property,
+            evalVisitor.getFOLFormulae(), clazz));
     }
 
     @Override
     public void visit(AssociationClassCallExp associationClassCallExp) {
-        // TODO Auto-generated method stub
-        
+        if (associationClassCallExp instanceof O2OAssociationClassCallExp) {
+            String association = associationClassCallExp.getAssociation();
+            String clazz = associationClassCallExp
+                .getReferredAssociationEndType().getReferredType();
+            evalVisitor = new O2F_EvalVisitor(dm);
+            Expression exp = associationClassCallExp.getNavigationSource();
+            exp.accept(evalVisitor);
+            String template = Template.Eval.association_0_1_arity;
+            this.setFOLFormulae(String.format(template, association,
+                evalVisitor.getFOLFormulae(), clazz));
+        } else if (associationClassCallExp instanceof M2OAssociationClassCallExp
+            && ((M2OAssociationClassCallExp) associationClassCallExp)
+                .isOneEndAssociationCall()) {
+            String association = associationClassCallExp.getAssociation();
+            String clazz = associationClassCallExp
+                .getReferredAssociationEndType().getReferredType();
+            evalVisitor = new O2F_EvalVisitor(dm);
+            Expression exp = associationClassCallExp.getNavigationSource();
+            exp.accept(evalVisitor);
+            String template = Template.Eval.association_0_1_arity;
+            this.setFOLFormulae(String.format(template, association,
+                evalVisitor.getFOLFormulae(), clazz));
+        }
     }
 
     @Override
     public void visit(VariableExp variableExp) {
-        // TODO Auto-generated method stub
-        
+        String template = Template.Eval.variable;
+        this.setFOLFormulae(
+            String.format(template, variableExp.getVariable().getName()));
     }
 }

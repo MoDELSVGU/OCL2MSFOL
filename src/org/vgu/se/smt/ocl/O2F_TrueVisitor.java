@@ -137,12 +137,48 @@ public class O2F_TrueVisitor extends OCL2MSFOLVisitor {
         case indexOf:
             break;
         case isEmpty:
+            template = Template.True.isEmpty;
+
+            Expression exp = iteratorExp.getSource();
+            var = "x";
+            type = iteratorExp.getSource().getType().getElementType().getReferredType();
+
+            evalVisitor = new O2F_EvalVisitor(dm);
+            exp.accept(evalVisitor);
+            List<Variable> fvExp = VariableUtils.FVars(exp);
+
+            firstArgument = app(evalVisitor.getFOLFormulae(), fvExp, var);
+
+            invalVisitor = new O2F_InvalidVisitor(dm);
+            exp.accept(invalVisitor);
+            secondArgument = invalVisitor.getFOLFormulae();
+
+            this.setFOLFormulae(String.format(template, var, "Classifier",
+                firstArgument, secondArgument));
             break;
         case isUnique:
             break;
         case last:
             break;
         case notEmpty:
+            template = Template.True.notEmpty;
+
+            exp = iteratorExp.getSource();
+            var = "x";
+            type = iteratorExp.getSource().getType().getElementType().getReferredType();
+
+            evalVisitor = new O2F_EvalVisitor(dm);
+            exp.accept(evalVisitor);
+            fvExp = VariableUtils.FVars(exp);
+
+            firstArgument = app(evalVisitor.getFOLFormulae(), fvExp, var);
+
+            invalVisitor = new O2F_InvalidVisitor(dm);
+            exp.accept(invalVisitor);
+            secondArgument = invalVisitor.getFOLFormulae();
+
+            this.setFOLFormulae(String.format(template, var, "Classifier",
+                firstArgument, secondArgument));
             break;
         case one:
             break;
@@ -196,13 +232,12 @@ public class O2F_TrueVisitor extends OCL2MSFOLVisitor {
                 String typeToCheck;
                 typeToCheck = ((TypeExp) argExp).getType().getReferredType();
                 this.setFOLFormulae(String.format(template,
-                    evalVisitor.getFOLFormulae(), typeToCheck));
+                    evalVisitor.getFOLFormulae(), typeOf(typeToCheck)));
             } else {
                 String typeToCheck;
-                typeToCheck = ((VariableExp) operationCallExp.getArguments()
-                    .get(0)).getType().getReferredType();
+                typeToCheck = ((VariableExp) argExp).getType().getReferredType();
                 this.setFOLFormulae(String.format(template,
-                    evalVisitor.getFOLFormulae(), typeToCheck));
+                    evalVisitor.getFOLFormulae(), typeOf(typeToCheck)));
             }
             break;
         case "oclIsTypeOf":
@@ -215,13 +250,12 @@ public class O2F_TrueVisitor extends OCL2MSFOLVisitor {
                 String typeToCheck;
                 typeToCheck = ((TypeExp) argExp).getType().getReferredType();
                 this.setFOLFormulae(String.format(template,
-                    evalVisitor.getFOLFormulae(), typeToCheck));
+                    evalVisitor.getFOLFormulae(), typeOf(typeToCheck)));
             } else {
                 String typeToCheck;
-                typeToCheck = ((VariableExp) operationCallExp.getArguments()
-                    .get(0)).getType().getReferredType();
+                typeToCheck = ((VariableExp) argExp).getType().getReferredType();
                 this.setFOLFormulae(String.format(template,
-                    evalVisitor.getFOLFormulae(), typeToCheck));
+                    evalVisitor.getFOLFormulae(), typeOf(typeToCheck)));
             }
             break;
         case "oclAsType":
@@ -335,46 +369,6 @@ public class O2F_TrueVisitor extends OCL2MSFOLVisitor {
                 String.format(template, firstArgument, secondArgument));
             break;
         case "size":
-            break;
-        case "isEmpty":
-            template = Template.True.isEmpty;
-
-            exp = operationCallExp.getSource();
-            String var = "x";
-            String type = "Classifier";
-
-            evalVisitor = new O2F_EvalVisitor(dm);
-
-            List<Variable> fvExp = VariableUtils.FVars(exp);
-
-            firstArgument = app(evalVisitor.getFOLFormulae(), fvExp, var);
-
-            invalVisitor = new O2F_InvalidVisitor(dm);
-            exp.accept(invalVisitor);
-            secondArgument = invalVisitor.getFOLFormulae();
-
-            this.setFOLFormulae(String.format(template, var, type,
-                firstArgument, secondArgument));
-            break;
-        case "notEmpty":
-            template = Template.True.isEmpty;
-
-            exp = operationCallExp.getSource();
-            var = "x";
-            type = "Classifier";
-
-            evalVisitor = new O2F_EvalVisitor(dm);
-
-            fvExp = VariableUtils.FVars(exp);
-
-            firstArgument = app(evalVisitor.getFOLFormulae(), fvExp, var);
-
-            invalVisitor = new O2F_InvalidVisitor(dm);
-            exp.accept(invalVisitor);
-            secondArgument = invalVisitor.getFOLFormulae();
-
-            this.setFOLFormulae(String.format(template, var, type,
-                firstArgument, secondArgument));
             break;
         case "isUnique":
             break;

@@ -28,6 +28,8 @@ import com.vgu.se.jocl.expressions.IntegerLiteralExp;
 import com.vgu.se.jocl.expressions.IteratorExp;
 import com.vgu.se.jocl.expressions.IteratorKind;
 import com.vgu.se.jocl.expressions.LiteralExp;
+import com.vgu.se.jocl.expressions.M2OAssociationClassCallExp;
+import com.vgu.se.jocl.expressions.O2OAssociationClassCallExp;
 import com.vgu.se.jocl.expressions.OclExp;
 import com.vgu.se.jocl.expressions.OperationCallExp;
 import com.vgu.se.jocl.expressions.PropertyCallExp;
@@ -144,12 +146,16 @@ public class O2F_NullVisitor extends OCL2MSFOLVisitor {
         case indexOf:
             break;
         case isEmpty:
+            template = Template.Null.isEmpty;
+            this.setFOLFormulae(template);
             break;
         case isUnique:
             break;
         case last:
             break;
         case notEmpty:
+            template = Template.Null.notEmpty;
+            this.setFOLFormulae(template);
             break;
         case one:
             break;
@@ -334,8 +340,20 @@ public class O2F_NullVisitor extends OCL2MSFOLVisitor {
 
     @Override
     public void visit(AssociationClassCallExp associationClassCallExp) {
-        // TODO Auto-generated method stub
-
+        if (associationClassCallExp instanceof O2OAssociationClassCallExp) {
+            String template = Template.Null.association_0_1_arity;
+            evalVisitor = new O2F_EvalVisitor(dm);
+            associationClassCallExp.accept(evalVisitor);
+            String type = associationClassCallExp.getReferredAssociationEndType().getReferredType();
+            this.setFOLFormulae(String.format(template, evalVisitor.getFOLFormulae(), nullOf(type)));
+        } else if (associationClassCallExp instanceof M2OAssociationClassCallExp 
+            && ((M2OAssociationClassCallExp) associationClassCallExp).isOneEndAssociationCall()) {
+            String template = Template.Null.association_0_1_arity;
+            evalVisitor = new O2F_EvalVisitor(dm);
+            associationClassCallExp.accept(evalVisitor);
+            String type = associationClassCallExp.getReferredAssociationEndType().getReferredType();
+            this.setFOLFormulae(String.format(template, evalVisitor.getFOLFormulae(), nullOf(type)));
+        }
     }
 
     @Override

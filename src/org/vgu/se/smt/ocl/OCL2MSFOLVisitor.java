@@ -20,6 +20,7 @@ package org.vgu.se.smt.ocl;
 import java.util.List;
 
 import org.vgu.dm2schema.dm.DataModel;
+import org.vgu.dm2schema.dm.Entity;
 
 import com.vgu.se.jocl.expressions.Variable;
 import com.vgu.se.jocl.visit.ParserVisitor;
@@ -51,19 +52,53 @@ public abstract class OCL2MSFOLVisitor implements ParserVisitor {
     }
 
     protected String app(String folFormulae, List<Variable> fvExp, String var) {
-        String output = folFormulae;
+        String parameter = "";
         for (Variable v : fvExp) {
-            output = output.concat("_").concat(v.getName());
+            parameter = parameter.concat(v.getName()).concat(" ");
         }
-        output = output.concat("_").concat(var);
-        return output;
+        parameter = parameter.concat(var);
+        return String.format(folFormulae, parameter);
     }
     
     protected String nullOf(String type) {
-        return "null".concat(type.substring(0, 1).toUpperCase()).concat(type.substring(1));
+        if(isClassType(type)) {
+            return "nullClassifier";
+        } else if (type.equals("Integer")) {
+            return "nullInt";
+        } else if (type.equals("String")) {
+            return "nullString";
+        }
+        return null;
     }
     
+    protected boolean isClassType(String type) {
+        for(Entity e : dm.getEntities().values()) {
+            if(e.getName().equals(type)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     protected String invalidOf(String type) {
-        return "invalid".concat(type.substring(0, 1).toUpperCase()).concat(type.substring(1));
+        if(isClassType(type)) {
+            return "invalidClassifier";
+        } else if (type.equals("Integer")) {
+            return "invalidInt";
+        } else if (type.equals("String")) {
+            return "invalidString";
+        }
+        return null;
+    }
+    
+    protected String typeOf(String type) {
+        if(isClassType(type)) {
+            return type.substring(0, 1).toUpperCase().concat(type.substring(1)).concat("Type");
+        } else if (type.equals("Integer")) {
+            return "Int";
+        } else if (type.equals("String")) {
+            return "String";
+        }
+        return null;
     }
 }
