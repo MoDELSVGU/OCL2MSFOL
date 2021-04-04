@@ -4,6 +4,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.json.simple.JSONArray;
@@ -12,6 +13,7 @@ import org.json.simple.parser.ParseException;
 import org.vgu.dm2schema.dm.DataModel;
 import org.vgu.se.smt.dm.DM2MSFOL;
 import org.vgu.se.smt.file.FileManager;
+import org.vgu.se.smt.logicvalue.LogicValue;
 import org.vgu.se.smt.ocl.OCL2MSFOL;
 
 /**************************************************************************
@@ -37,14 +39,32 @@ public class Main {
         FileManager fm = FileManager.getInstance();
         fm.setSafeMode(false);
         fm.init();
-        DataModel dm = setDataModelFromFile("resources\\dm_fol.json");
+        DataModel dm = setDataModelFromFile("resources\\vgu_dm.json");
+        
+        List<String> oclExp = Arrays.asList(
+//    		"TRUE"
+//    		"caller = self"
+//    		"caller.students->includes(self)"
+//    		"Lecturer.allInstances()->forAll(l|Student.allInstances()->forAll(s|l.students->includes(s)))"
+//    		"Lecturer.allInstances()->select(l|l = caller)->includes(self)"
+//    		"Lecturer.allInstances()->forAll(l1|Lecturer.allInstances()->forAll(l2|l1.age = l2.age))"
+    		"Lecturer.allInstances()->forAll(l|l<>caller implies l.age < caller.age)"
+        		);
 
         DM2MSFOL.setDataModel(dm);
         DM2MSFOL.map(fm);
+        
+        OCL2MSFOL.setDataModel(dm);
+        // This is just for now.
+        OCL2MSFOL.putAdhocContextualSet("caller", "Lecturer");
+        OCL2MSFOL.putAdhocContextualSet("self", "Lecturer");
+        
+        OCL2MSFOL.setExpression(oclExp.get(0));
+        OCL2MSFOL.setLvalue(LogicValue.TRUE);
+        OCL2MSFOL.map(fm);
 
         fm.checkSat();
         fm.close();
-
     }
 
     @SuppressWarnings("unused")

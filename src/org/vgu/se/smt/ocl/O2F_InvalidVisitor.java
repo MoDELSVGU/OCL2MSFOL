@@ -17,6 +17,9 @@ limitations under the License.
 
 package org.vgu.se.smt.ocl;
 
+import java.util.Map;
+import java.util.Set;
+
 import org.vgu.dm2schema.dm.DataModel;
 
 import com.vgu.se.jocl.expressions.AssociationClassCallExp;
@@ -31,13 +34,16 @@ import com.vgu.se.jocl.expressions.O2OAssociationClassCallExp;
 import com.vgu.se.jocl.expressions.OperationCallExp;
 import com.vgu.se.jocl.expressions.PropertyCallExp;
 import com.vgu.se.jocl.expressions.StringLiteralExp;
+import com.vgu.se.jocl.expressions.Variable;
 import com.vgu.se.jocl.expressions.VariableExp;
 
 public class O2F_InvalidVisitor extends OCL2MSFOLVisitor {
 
-    public O2F_InvalidVisitor(DataModel dm) {
-        this.setDataModel(dm);
-    }
+    public O2F_InvalidVisitor(DataModel dm, Set<Variable> adhocContextualSet, Map<Expression, DefC> defC) {
+		this.setDataModel(dm);
+		this.setAdhocContextualSet(adhocContextualSet);
+		this.defC = defC;
+	}
 
     @Override
     public void visit(Expression exp) {
@@ -89,7 +95,7 @@ public class O2F_InvalidVisitor extends OCL2MSFOLVisitor {
         case isEmpty:
             String template = Template.Invalid.isEmpty;
             Expression exp = iteratorExp.getSource();
-            invalVisitor = new O2F_InvalidVisitor(dm);
+            invalVisitor = new O2F_InvalidVisitor(dm,adhocContextualSet,defC);
             exp.accept(invalVisitor);
             this.setFOLFormulae(
                 String.format(template, invalVisitor.getFOLFormulae()));
@@ -101,7 +107,7 @@ public class O2F_InvalidVisitor extends OCL2MSFOLVisitor {
         case notEmpty:
             template = Template.Invalid.notEmpty;
             exp = iteratorExp.getSource();
-            invalVisitor = new O2F_InvalidVisitor(dm);
+            invalVisitor = new O2F_InvalidVisitor(dm,adhocContextualSet,defC);
             exp.accept(invalVisitor);
             this.setFOLFormulae(
                 String.format(template, invalVisitor.getFOLFormulae()));
@@ -111,6 +117,12 @@ public class O2F_InvalidVisitor extends OCL2MSFOLVisitor {
         case reject:
             break;
         case select:
+        	template = Template.Invalid.select;
+            exp = iteratorExp.getSource();
+            invalVisitor = new O2F_InvalidVisitor(dm,adhocContextualSet,defC);
+            exp.accept(invalVisitor);
+            this.setFOLFormulae(
+                String.format(template, invalVisitor.getFOLFormulae()));
             break;
         case size:
             break;
@@ -155,12 +167,12 @@ public class O2F_InvalidVisitor extends OCL2MSFOLVisitor {
 
             Expression exp = operationCallExp.getSource();
             Expression argExp = operationCallExp.getArguments().get(0);
-            nullVisitor = new O2F_NullVisitor(dm);
+            nullVisitor = new O2F_NullVisitor(dm,adhocContextualSet,defC);
             exp.accept(nullVisitor);
             String firstArgument = nullVisitor.getFOLFormulae();
             argExp.accept(nullVisitor);
             String secondArgument = nullVisitor.getFOLFormulae();
-            invalVisitor = new O2F_InvalidVisitor(dm);
+            invalVisitor = new O2F_InvalidVisitor(dm,adhocContextualSet,defC);
             exp.accept(invalVisitor);
             String thirdArgument = invalVisitor.getFOLFormulae();
             argExp.accept(invalVisitor);
@@ -174,12 +186,12 @@ public class O2F_InvalidVisitor extends OCL2MSFOLVisitor {
 
             exp = operationCallExp.getSource();
             argExp = operationCallExp.getArguments().get(0);
-            nullVisitor = new O2F_NullVisitor(dm);
+            nullVisitor = new O2F_NullVisitor(dm,adhocContextualSet,defC);
             exp.accept(nullVisitor);
             firstArgument = nullVisitor.getFOLFormulae();
             argExp.accept(nullVisitor);
             secondArgument = nullVisitor.getFOLFormulae();
-            invalVisitor = new O2F_InvalidVisitor(dm);
+            invalVisitor = new O2F_InvalidVisitor(dm,adhocContextualSet,defC);
             exp.accept(invalVisitor);
             thirdArgument = invalVisitor.getFOLFormulae();
             argExp.accept(invalVisitor);
@@ -198,17 +210,17 @@ public class O2F_InvalidVisitor extends OCL2MSFOLVisitor {
 
             exp = operationCallExp.getSource();
             argExp = operationCallExp.getArguments().get(0);
-            invalVisitor = new O2F_InvalidVisitor(dm);
+            invalVisitor = new O2F_InvalidVisitor(dm,adhocContextualSet,defC);
             exp.accept(invalVisitor);
             firstArgument = invalVisitor.getFOLFormulae();
             argExp.accept(invalVisitor);
             secondArgument = invalVisitor.getFOLFormulae();
-            trueVisitor = new O2F_TrueVisitor(dm);
+            trueVisitor = new O2F_TrueVisitor(dm,adhocContextualSet,defC);
             exp.accept(trueVisitor);
             String fifthArgument = trueVisitor.getFOLFormulae();
             argExp.accept(trueVisitor);
             thirdArgument = trueVisitor.getFOLFormulae();
-            nullVisitor = new O2F_NullVisitor(dm);
+            nullVisitor = new O2F_NullVisitor(dm,adhocContextualSet,defC);
             exp.accept(nullVisitor);
             String sixthArgument = nullVisitor.getFOLFormulae();
             argExp.accept(invalVisitor);
@@ -223,17 +235,17 @@ public class O2F_InvalidVisitor extends OCL2MSFOLVisitor {
 
             exp = operationCallExp.getSource();
             argExp = operationCallExp.getArguments().get(0);
-            invalVisitor = new O2F_InvalidVisitor(dm);
+            invalVisitor = new O2F_InvalidVisitor(dm,adhocContextualSet,defC);
             exp.accept(invalVisitor);
             firstArgument = invalVisitor.getFOLFormulae();
             argExp.accept(invalVisitor);
             secondArgument = invalVisitor.getFOLFormulae();
-            falseVisitor = new O2F_FalseVisitor(dm);
+            falseVisitor = new O2F_FalseVisitor(dm,adhocContextualSet,defC);
             exp.accept(falseVisitor);
             fifthArgument = falseVisitor.getFOLFormulae();
             argExp.accept(falseVisitor);
             thirdArgument = falseVisitor.getFOLFormulae();
-            nullVisitor = new O2F_NullVisitor(dm);
+            nullVisitor = new O2F_NullVisitor(dm,adhocContextualSet,defC);
             exp.accept(nullVisitor);
             sixthArgument = nullVisitor.getFOLFormulae();
             argExp.accept(invalVisitor);
@@ -246,7 +258,7 @@ public class O2F_InvalidVisitor extends OCL2MSFOLVisitor {
         case "not":
             template = Template.Invalid.not;
             exp = operationCallExp.getArguments().get(0);
-            invalVisitor = new O2F_InvalidVisitor(dm);
+            invalVisitor = new O2F_InvalidVisitor(dm,adhocContextualSet,defC);
             exp.accept(invalVisitor);
             this.setFOLFormulae(
                 String.format(template, invalVisitor.getFOLFormulae()));
@@ -257,7 +269,7 @@ public class O2F_InvalidVisitor extends OCL2MSFOLVisitor {
             exp = operationCallExp.getSource();
             argExp = operationCallExp.getArguments().get(0);
 
-            invalVisitor = new O2F_InvalidVisitor(dm);
+            invalVisitor = new O2F_InvalidVisitor(dm,adhocContextualSet,defC);
             exp.accept(invalVisitor);
             firstArgument = invalVisitor.getFOLFormulae();
             argExp.accept(invalVisitor);
@@ -271,7 +283,7 @@ public class O2F_InvalidVisitor extends OCL2MSFOLVisitor {
         case "isEmpty":
             template = Template.Invalid.isEmpty;
             exp = operationCallExp.getSource();
-            invalVisitor = new O2F_InvalidVisitor(dm);
+            invalVisitor = new O2F_InvalidVisitor(dm,adhocContextualSet,defC);
             exp.accept(invalVisitor);
             this.setFOLFormulae(
                 String.format(template, invalVisitor.getFOLFormulae()));
@@ -279,7 +291,7 @@ public class O2F_InvalidVisitor extends OCL2MSFOLVisitor {
         case "notEmpty":
             template = Template.Invalid.notEmpty;
             exp = operationCallExp.getSource();
-            invalVisitor = new O2F_InvalidVisitor(dm);
+            invalVisitor = new O2F_InvalidVisitor(dm,adhocContextualSet,defC);
             exp.accept(invalVisitor);
             this.setFOLFormulae(
                 String.format(template, invalVisitor.getFOLFormulae()));
@@ -307,8 +319,7 @@ public class O2F_InvalidVisitor extends OCL2MSFOLVisitor {
 
     @Override
     public void visit(BooleanLiteralExp booleanLiteralExp) {
-        // TODO Auto-generated method stub
-
+    	this.setFOLFormulae("false");
     }
 
     @Override
@@ -323,10 +334,10 @@ public class O2F_InvalidVisitor extends OCL2MSFOLVisitor {
 
         Expression exp = propertyCallExp.getNavigationSource();
 
-        nullVisitor = new O2F_NullVisitor(dm);
+        nullVisitor = new O2F_NullVisitor(dm,adhocContextualSet,defC);
         exp.accept(nullVisitor);
 
-        invalVisitor = new O2F_InvalidVisitor(dm);
+        invalVisitor = new O2F_InvalidVisitor(dm,adhocContextualSet,defC);
         exp.accept(invalVisitor);
 
         this.setFOLFormulae(String.format(template,
@@ -338,18 +349,26 @@ public class O2F_InvalidVisitor extends OCL2MSFOLVisitor {
         if (associationClassCallExp instanceof O2OAssociationClassCallExp) {
             String template = Template.Invalid.association_0_1_arity;
             Expression exp = associationClassCallExp.getNavigationSource();
-            nullVisitor = new O2F_NullVisitor(dm);
+            nullVisitor = new O2F_NullVisitor(dm,adhocContextualSet,defC);
             exp.accept(nullVisitor);
-            invalVisitor = new O2F_InvalidVisitor(dm);
+            invalVisitor = new O2F_InvalidVisitor(dm,adhocContextualSet,defC);
             exp.accept(invalVisitor);
             this.setFOLFormulae(String.format(template, nullVisitor.getFOLFormulae(), invalVisitor.getFOLFormulae()));
         } else if (associationClassCallExp instanceof M2OAssociationClassCallExp 
             && ((M2OAssociationClassCallExp) associationClassCallExp).isOneEndAssociationCall()) {
             String template = Template.Invalid.association_0_1_arity;
             Expression exp = associationClassCallExp.getNavigationSource();
-            nullVisitor = new O2F_NullVisitor(dm);
+            nullVisitor = new O2F_NullVisitor(dm,adhocContextualSet,defC);
             exp.accept(nullVisitor);
-            invalVisitor = new O2F_InvalidVisitor(dm);
+            invalVisitor = new O2F_InvalidVisitor(dm,adhocContextualSet,defC);
+            exp.accept(invalVisitor);
+            this.setFOLFormulae(String.format(template, nullVisitor.getFOLFormulae(), invalVisitor.getFOLFormulae()));
+        } else {
+        	String template = Template.Invalid.association_n_arity;
+            Expression exp = associationClassCallExp.getNavigationSource();
+            nullVisitor = new O2F_NullVisitor(dm,adhocContextualSet,defC);
+            exp.accept(nullVisitor);
+            invalVisitor = new O2F_InvalidVisitor(dm,adhocContextualSet,defC);
             exp.accept(invalVisitor);
             this.setFOLFormulae(String.format(template, nullVisitor.getFOLFormulae(), invalVisitor.getFOLFormulae()));
         }

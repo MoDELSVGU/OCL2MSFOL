@@ -17,21 +17,30 @@ limitations under the License.
 
 package org.vgu.se.smt.ocl;
 
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.vgu.dm2schema.dm.DataModel;
 import org.vgu.dm2schema.dm.Entity;
 
+import com.vgu.se.jocl.expressions.Expression;
 import com.vgu.se.jocl.expressions.Variable;
 import com.vgu.se.jocl.visit.ParserVisitor;
 
 public abstract class OCL2MSFOLVisitor implements ParserVisitor {
     protected DataModel dm;
+    protected Set<Variable> adhocContextualSet = new HashSet<>();
+    protected Map<Expression, DefC> defC = new HashMap<Expression, DefC>();
+    
     protected O2F_NullVisitor nullVisitor;
     protected O2F_TrueVisitor trueVisitor;
     protected O2F_FalseVisitor falseVisitor;
     protected O2F_InvalidVisitor invalVisitor;
     protected O2F_EvalVisitor evalVisitor;
+    protected O2F_DefCVisitor defCVisitor;
 
     public void setDataModel(DataModel dm) {
         this.dm = dm;
@@ -56,7 +65,9 @@ public abstract class OCL2MSFOLVisitor implements ParserVisitor {
         for (Variable v : fvExp) {
             parameter = parameter.concat(v.getName()).concat(" ");
         }
-        parameter = parameter.concat(var);
+        if (var != null) {
+        	parameter = parameter.concat(var);
+        }
         return String.format(folFormulae, parameter);
     }
     
@@ -101,4 +112,12 @@ public abstract class OCL2MSFOLVisitor implements ParserVisitor {
         }
         return null;
     }
+
+	public Set<Variable> getAdhocContextualSet() {
+		return adhocContextualSet;
+	}
+
+	public void setAdhocContextualSet(Set<Variable> adhocContextualSet) {
+		this.adhocContextualSet = adhocContextualSet;
+	}
 }

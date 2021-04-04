@@ -17,6 +17,9 @@ limitations under the License.
 
 package org.vgu.se.smt.ocl;
 
+import java.util.Map;
+import java.util.Set;
+
 import org.vgu.dm2schema.dm.Attribute;
 import org.vgu.dm2schema.dm.DataModel;
 import org.vgu.dm2schema.dm.Entity;
@@ -26,19 +29,23 @@ import com.vgu.se.jocl.expressions.BooleanLiteralExp;
 import com.vgu.se.jocl.expressions.Expression;
 import com.vgu.se.jocl.expressions.IntegerLiteralExp;
 import com.vgu.se.jocl.expressions.IteratorExp;
+import com.vgu.se.jocl.expressions.IteratorKind;
 import com.vgu.se.jocl.expressions.LiteralExp;
 import com.vgu.se.jocl.expressions.M2OAssociationClassCallExp;
 import com.vgu.se.jocl.expressions.O2OAssociationClassCallExp;
 import com.vgu.se.jocl.expressions.OperationCallExp;
 import com.vgu.se.jocl.expressions.PropertyCallExp;
 import com.vgu.se.jocl.expressions.StringLiteralExp;
+import com.vgu.se.jocl.expressions.Variable;
 import com.vgu.se.jocl.expressions.VariableExp;
 
 public class O2F_EvalVisitor extends OCL2MSFOLVisitor {
 
-    public O2F_EvalVisitor(DataModel dm) {
-        this.dm = dm;
-    }
+    public O2F_EvalVisitor(DataModel dm, Set<Variable> adhocContextualSet, Map<Expression, DefC> defC) {
+		this.setDataModel(dm);
+		this.setAdhocContextualSet(adhocContextualSet);
+		this.defC = defC;
+	}
 
     @Override
     public void visit(Expression exp) {
@@ -48,8 +55,18 @@ public class O2F_EvalVisitor extends OCL2MSFOLVisitor {
 
     @Override
     public void visit(IteratorExp iteratorExp) {
-        // TODO Auto-generated method stub
-
+    	switch (IteratorKind.valueOf(iteratorExp.getKind())) {
+		case collect:
+			break;
+		case select:
+	    	defCVisitor = new O2F_DefCVisitor(dm,adhocContextualSet,defC);
+	    	iteratorExp.accept(defCVisitor);
+	    	String defCNameApplied = defC.get(iteratorExp).nameApplied;
+	    	this.setFOLFormulae(String.format(defCNameApplied, "%s"));
+	    	break;
+		default:
+			break;
+		}
     }
 
     @Override
@@ -133,7 +150,7 @@ public class O2F_EvalVisitor extends OCL2MSFOLVisitor {
                 }
             }
         }
-        evalVisitor = new O2F_EvalVisitor(dm);
+        evalVisitor = new O2F_EvalVisitor(dm,adhocContextualSet,defC);
         Expression exp = propertyCallExp.getNavigationSource();
         exp.accept(evalVisitor);
         String template = Template.Eval.attribute;
@@ -147,7 +164,7 @@ public class O2F_EvalVisitor extends OCL2MSFOLVisitor {
             String association = associationClassCallExp.getAssociation();
             String clazz = associationClassCallExp
                 .getReferredAssociationEndType().getReferredType();
-            evalVisitor = new O2F_EvalVisitor(dm);
+            evalVisitor = new O2F_EvalVisitor(dm,adhocContextualSet,defC);
             Expression exp = associationClassCallExp.getNavigationSource();
             exp.accept(evalVisitor);
             String template = Template.Eval.association_0_1_arity;
@@ -159,12 +176,20 @@ public class O2F_EvalVisitor extends OCL2MSFOLVisitor {
             String association = associationClassCallExp.getAssociation();
             String clazz = associationClassCallExp
                 .getReferredAssociationEndType().getReferredType();
-            evalVisitor = new O2F_EvalVisitor(dm);
+            evalVisitor = new O2F_EvalVisitor(dm,adhocContextualSet,defC);
             Expression exp = associationClassCallExp.getNavigationSource();
             exp.accept(evalVisitor);
             String template = Template.Eval.association_0_1_arity;
             this.setFOLFormulae(String.format(template, association,
                 evalVisitor.getFOLFormulae(), clazz));
+        } else {
+        	String association = associationClassCallExp.getAssociation();
+        	String template = Template.Eval.association_n_arity;
+        	evalVisitor = new O2F_EvalVisitor(dm,adhocContextualSet,defC);
+            Expression exp = associationClassCallExp.getNavigationSource();
+            exp.accept(evalVisitor);
+            this.setFOLFormulae(String.format(template, association,
+                    "%s"));
         }
     }
 
