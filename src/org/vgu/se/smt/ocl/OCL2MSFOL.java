@@ -64,8 +64,8 @@ public class OCL2MSFOL {
 		OCL2MSFOLVisitor visitor;
 
 		for (Variable v : adhocContextualSet) {
-			fm.assertln(String.format("(declare-const %s %s)", v.getName(), "Classifier"));
-			fm.assertln(String.format("(assert (%s %s))", v.getType(), v.getName()));
+			fm.writeln(String.format("(declare-const %s %s)", v.getName(), "Classifier"));
+			fm.writeln(String.format("(assert (%s %s))", v.getType(), v.getName()));
 		}
 		
 		defC = new HashMap<Expression, DefC>();
@@ -82,7 +82,7 @@ public class OCL2MSFOL {
 		exp.accept(visitor);
 		
 		for (DefC d : defC.values()) {
-			fm.assertln(String.format("(declare-fun %s)", d.nameDefinition));
+			fm.writeln(String.format("(declare-fun %s)", d.nameDefinition));
 			fm.assertln(d.assertion);
 		}
 		

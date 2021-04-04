@@ -42,13 +42,13 @@ public class Main {
         DataModel dm = setDataModelFromFile("resources\\vgu_dm.json");
         
         List<String> oclExp = Arrays.asList(
-//    		"TRUE"
-//    		"caller = self"
-//    		"caller.students->includes(self)"
-//    		"Lecturer.allInstances()->forAll(l|Student.allInstances()->forAll(s|l.students->includes(s)))"
-//    		"Lecturer.allInstances()->select(l|l = caller)->includes(self)"
-//    		"Lecturer.allInstances()->forAll(l1|Lecturer.allInstances()->forAll(l2|l1.age = l2.age))"
-    		"Lecturer.allInstances()->forAll(l|l<>caller implies l.age < caller.age)"
+    		"TRUE"
+    		,"caller = self"
+    		,"caller.students->includes(self)"
+    		,"Lecturer.allInstances()->forAll(l|Student.allInstances()->forAll(s|l.students->includes(s)))"
+    		,"Lecturer.allInstances()->select(l|l = caller)->includes(self)"
+    		,"Lecturer.allInstances()->forAll(l1|Lecturer.allInstances()->forAll(l2|l1.age = l2.age))"
+    		,"Lecturer.allInstances()->forAll(l|l<>caller implies l.age < caller.age)"
         		);
 
         DM2MSFOL.setDataModel(dm);
@@ -56,9 +56,11 @@ public class Main {
         
         OCL2MSFOL.setDataModel(dm);
         // This is just for now.
+        fm.commentln("Ad-hoc Contextual Model");
         OCL2MSFOL.putAdhocContextualSet("caller", "Lecturer");
         OCL2MSFOL.putAdhocContextualSet("self", "Lecturer");
         
+        fm.commentln(oclExp.get(0));
         OCL2MSFOL.setExpression(oclExp.get(0));
         OCL2MSFOL.setLvalue(LogicValue.TRUE);
         OCL2MSFOL.map(fm);

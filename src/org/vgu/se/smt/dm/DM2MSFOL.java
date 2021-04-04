@@ -128,11 +128,11 @@ public class DM2MSFOL {
 		for (Association as : dm.getAssociations()) {
 			if (as.isManyToMany()) {
 				fileManager.writeln(String.format(Template.ASSOCIATION, as.getName()));
-				fileManager.assertln(String.format(Template.ASSOCIATION_1, as.getName(),
-						fileManager.isSafeMode() ? String.format("(%s x)", as.getLeftEntityName())
-								: getGeneralizationFormulae(dm.getEntities().get(as.getLeftEntityName())),
-						fileManager.isSafeMode() ? String.format("(%s y)", as.getRightEntityName())
-								: getGeneralizationFormulae(dm.getEntities().get(as.getRightEntityName()))));
+				String lhs = fileManager.isSafeMode() ? String.format("(%s x)", as.getLeftEntityName())
+						: getGeneralizationFormulae(dm.getEntities().get(as.getLeftEntityName()), "x");
+				String rhs = fileManager.isSafeMode() ? String.format("(%s y)", as.getRightEntityName())
+						: getGeneralizationFormulae(dm.getEntities().get(as.getRightEntityName()), "y");
+				fileManager.assertln(String.format(Template.ASSOCIATION_1, as.getName(), lhs, rhs));
 			} else if (as.isManyToOne()) {
 				fileManager.writeln(String.format(Template.ASSOCIATION_2, as.getOneEnd().getCurrentClass(),
 						as.getOneEnd().getName()));
@@ -147,9 +147,9 @@ public class DM2MSFOL {
 				fileManager.assertln(String.format(Template.ASSOCIATION_1, as.getManyEnd().getCurrentClass(),
 						as.getManyEnd().getName(),
 						fileManager.isSafeMode() ? String.format("(%s x)", as.getManyEnd().getCurrentClass())
-								: getGeneralizationFormulae(dm.getEntities().get(as.getManyEnd().getCurrentClass())),
+								: getGeneralizationFormulae(dm.getEntities().get(as.getManyEnd().getCurrentClass()), "x"),
 						fileManager.isSafeMode() ? String.format("(%s y)", as.getManyEnd().getTargetClass())
-								: getGeneralizationFormulae(dm.getEntities().get(as.getManyEnd().getTargetClass()))));
+								: getGeneralizationFormulae(dm.getEntities().get(as.getManyEnd().getTargetClass()), "y")));
 				fileManager.assertln(String.format(Template.ASSOCIATION_5, as.getManyEnd().getCurrentClass(),
 						as.getManyEnd().getTargetClass(), as.getManyEnd().getOpp(), as.getManyEnd().getName()));
 				fileManager.assertln(String.format(Template.ASSOCIATION_6, as.getManyEnd().getCurrentClass(),
@@ -179,7 +179,7 @@ public class DM2MSFOL {
 				}
 			}
 			fileManager.assertln(String.format(Template.ENTITY_4, e.getName()));
-			fileManager.assertln(String.format(Template.ENTITY_5, getGeneralizationFormulae(e), e.getName()));
+			fileManager.assertln(String.format(Template.ENTITY_5, getGeneralizationFormulae(e, ""), e.getName()));
 		}
 	}
 
@@ -192,7 +192,7 @@ public class DM2MSFOL {
 					at.getType().compareTo("String") == 0 ? "String" : "Int"));
 			fileManager.assertln(String.format(Template.ATTRIBUTE_1_BIS, at.getName(), e.getName(),
 					at.getType().compareTo("String") == 0 ? "String" : "Int"));
-			fileManager.assertln(String.format(Template.ATTRIBUTE_2, getGeneralizationFormulae(e), at.getName(),
+			fileManager.assertln(String.format(Template.ATTRIBUTE_2, getGeneralizationFormulae(e, ""), at.getName(),
 					e.getName(), at.getType().compareTo("String") == 0 ? "String" : "Int"));
 		}
 	}
@@ -218,17 +218,30 @@ public class DM2MSFOL {
 		}
 	}
 
-	private static String getGeneralizationFormulae(Entity e) {
+	private static String getGeneralizationFormulae(Entity e, String var) {
 		Set<Entity> superClasses = new HashSet<Entity>(getSubClasses(e));
-		if (superClasses.isEmpty()) {
-			return String.format("(%s x)", e.getName());
-		} else {
-			String s = "(or %s)";
-			String firstClass = String.format("(%s x)", e.getName());
-			for (Entity e_ : superClasses) {
-				firstClass = firstClass.concat(String.format(" (%s x)", e_.getName()));
+		if (var.isEmpty()) {
+			if (superClasses.isEmpty()) {
+				return String.format("(%s x)", e.getName());
+			} else {
+				String s = "(or %s)";
+				String firstClass = String.format("(%s x)", e.getName());
+				for (Entity e_ : superClasses) {
+					firstClass = firstClass.concat(String.format(" (%s x)", e_.getName()));
+				}
+				return String.format(s, firstClass);
 			}
-			return String.format(s, firstClass);
+		} else {
+			if (superClasses.isEmpty()) {
+				return String.format("(%s %s)", e.getName(), var);
+			} else {
+				String s = "(or %s)";
+				String firstClass = String.format("(%s %s)", e.getName(), var);
+				for (Entity e_ : superClasses) {
+					firstClass = firstClass.concat(String.format(" (%s %s)", e_.getName(), var));
+				}
+				return String.format(s, firstClass);
+			}
 		}
 	}
 
