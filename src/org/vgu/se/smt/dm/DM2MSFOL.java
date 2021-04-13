@@ -155,7 +155,7 @@ public class DM2MSFOL {
 				fileManager.assertln(String.format(Template.ASSOCIATION_6, as.getManyEnd().getCurrentClass(),
 						as.getManyEnd().getName(), as.getManyEnd().getTargetClass(), as.getManyEnd().getOpp()));
 			} else {
-				// TODO: One to One
+				// Implement one-to-one transformation from DM2MSFOL
 			}
 		}
 	}

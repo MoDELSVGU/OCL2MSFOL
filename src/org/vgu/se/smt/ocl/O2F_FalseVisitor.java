@@ -49,8 +49,7 @@ public class O2F_FalseVisitor extends OCL2MSFOLVisitor {
 
     @Override
     public void visit(Expression exp) {
-        // TODO Auto-generated method stub
-
+    	// We don't implement concrete detail for abstract objects.
     }
 
     @Override
@@ -386,14 +385,12 @@ public class O2F_FalseVisitor extends OCL2MSFOLVisitor {
 
     @Override
     public void visit(LiteralExp literalExp) {
-        // TODO Auto-generated method stub
-
+    	// We don't implement concrete detail for abstract objects.
     }
 
     @Override
     public void visit(StringLiteralExp stringLiteralExp) {
-        // TODO Auto-generated method stub
-
+        // TODO Implement StringLiteralExp for O2Ffalse
     }
 
     @Override
@@ -407,25 +404,21 @@ public class O2F_FalseVisitor extends OCL2MSFOLVisitor {
 
     @Override
     public void visit(IntegerLiteralExp integerLiteralExp) {
-        // TODO Auto-generated method stub
-
+    	// TODO Implement IntegerLiteralExp for O2Ffalse
     }
 
     @Override
     public void visit(PropertyCallExp propertyCallExp) {
-        // TODO Auto-generated method stub
-
+    	// TODO Implement PropertyCallExp for O2Ffalse
     }
 
     @Override
     public void visit(AssociationClassCallExp associationClassCallExp) {
-        // TODO Auto-generated method stub
-
+    	// TODO Implement AssociationClassCallExp for O2Ffalse
     }
 
     @Override
     public void visit(VariableExp variableExp) {
-        // TODO Auto-generated method stub
-
+    	// TODO Implement VariableExp for O2Ffalse
     }
 }

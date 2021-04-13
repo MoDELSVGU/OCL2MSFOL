@@ -49,8 +49,7 @@ public class O2F_TrueVisitor extends OCL2MSFOLVisitor {
 
 	@Override
 	public void visit(Expression exp) {
-		// TODO Auto-generated method stub
-
+		// We don't implement concrete detail for abstract objects.
 	}
 
 	@Override
@@ -135,7 +134,8 @@ public class O2F_TrueVisitor extends OCL2MSFOLVisitor {
 			break;
 		case includes:
 			template = Template.True.includes;
-			// TODO: This can be duplicated. Temporary put it as i.
+			// TODO: Investigate what is the meaning of this? 
+			// This can be duplicated. Temporary put it as i.
 			var = "i";
 			type = "Classifier";
 
@@ -425,14 +425,12 @@ public class O2F_TrueVisitor extends OCL2MSFOLVisitor {
 
 	@Override
 	public void visit(LiteralExp literalExp) {
-		// TODO Auto-generated method stub
-
+		// We don't implement concrete detail for abstract objects.
 	}
 
 	@Override
 	public void visit(StringLiteralExp stringLiteralExp) {
-		// TODO Auto-generated method stub
-
+		// TODO Implement StringLiteralExp for O2Ftrue
 	}
 
 	@Override
@@ -446,25 +444,21 @@ public class O2F_TrueVisitor extends OCL2MSFOLVisitor {
 
 	@Override
 	public void visit(IntegerLiteralExp integerLiteralExp) {
-		// TODO Auto-generated method stub
-
+		// TODO Implement IntegerLiteralExp for O2Ftrue
 	}
 
 	@Override
 	public void visit(PropertyCallExp propertyCallExp) {
-		// TODO Auto-generated method stub
-
+		// TODO Implement PropertyCallExp for O2Ftrue
 	}
 
 	@Override
 	public void visit(AssociationClassCallExp associationClassCallExp) {
-		// TODO Auto-generated method stub
-
+		// TODO Implement AssociationClassCallExp for O2Ftrue
 	}
 
 	@Override
 	public void visit(VariableExp variableExp) {
-		// TODO Auto-generated method stub
-
+		// TODO Implement VariableExp for O2Ftrue
 	}
 }

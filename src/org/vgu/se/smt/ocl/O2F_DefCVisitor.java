@@ -31,8 +31,7 @@ public class O2F_DefCVisitor extends OCL2MSFOLVisitor {
 
 	@Override
 	public void visit(Expression exp) {
-		// TODO Auto-generated method stub
-
+		// We don't implement concrete detail for abstract objects.
 	}
 
 	@Override
@@ -41,6 +40,7 @@ public class O2F_DefCVisitor extends OCL2MSFOLVisitor {
 		case collect:
 			break;
 		case select:
+			// First line
 			String newDefCName = "TEMP" + String.valueOf(defC.size());
 			List<Variable> fVars = VariableUtils.FVars(iteratorExp);
 			if (fVars.isEmpty()) {
@@ -54,6 +54,7 @@ public class O2F_DefCVisitor extends OCL2MSFOLVisitor {
 			String template = Template.Def_c.select_1;
 			String firstArgument = app(defCElement.nameApplied, fVars, var);
 			evalVisitor = new O2F_EvalVisitor(dm, adhocContextualSet, defC);
+			
 			Expression sourceExp = (OclExp) iteratorExp.getSource();
 			List<Variable> fVarsSrc = VariableUtils.FVars(sourceExp);
 			evalVisitor = new O2F_EvalVisitor(dm, adhocContextualSet, defC);
@@ -77,50 +78,42 @@ public class O2F_DefCVisitor extends OCL2MSFOLVisitor {
 
 	@Override
 	public void visit(OperationCallExp operationCallExp) {
-		// TODO Auto-generated method stub
-
+		// We don't implement concrete detail for abstract objects.
 	}
 
 	@Override
 	public void visit(LiteralExp literalExp) {
-		// TODO Auto-generated method stub
-
+		// We don't implement concrete detail for abstract objects.
 	}
 
 	@Override
 	public void visit(StringLiteralExp stringLiteralExp) {
-		// TODO Auto-generated method stub
-
+		// StringLiteralExp does not have a Def_c definition
 	}
 
 	@Override
 	public void visit(BooleanLiteralExp booleanLiteralExp) {
-		// TODO Auto-generated method stub
-
+		// BooleanLiteralExp does not have a Def_c definition
 	}
 
 	@Override
 	public void visit(IntegerLiteralExp integerLiteralExp) {
-		// TODO Auto-generated method stub
-
+		// IntegerLiteralExp does not have a Def_c definition
 	}
 
 	@Override
 	public void visit(PropertyCallExp propertyCallExp) {
-		// TODO Auto-generated method stub
-
+		// PropertyCallExp does not have a Def_c definition
 	}
 
 	@Override
 	public void visit(AssociationClassCallExp associationClassCallExp) {
-		// TODO Auto-generated method stub
-
+		// TODO: Implement Def_c definition for association-end expressions of case many-to-many
 	}
 
 	@Override
 	public void visit(VariableExp variableExp) {
-		// TODO Auto-generated method stub
-
+		// VariableExp does not have a Def_c definition
 	}
 
 }

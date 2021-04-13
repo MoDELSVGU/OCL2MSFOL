@@ -49,8 +49,7 @@ public class O2F_EvalVisitor extends OCL2MSFOLVisitor {
 
     @Override
     public void visit(Expression exp) {
-        // TODO Auto-generated method stub
-
+    	// We don't implement concrete detail for abstract objects.
     }
 
     @Override
@@ -116,19 +115,18 @@ public class O2F_EvalVisitor extends OCL2MSFOLVisitor {
 
     @Override
     public void visit(LiteralExp literalExp) {
-        // TODO Auto-generated method stub
-
+    	// We don't implement concrete detail for abstract objects.
     }
 
     @Override
     public void visit(StringLiteralExp stringLiteralExp) {
-        // TODO Auto-generated method stub
+    	// TODO Implement StringLiteralExp in O2F_eval definition
 
     }
 
     @Override
     public void visit(BooleanLiteralExp booleanLiteralExp) {
-        // TODO Auto-generated method stub
+        // TODO Implement BooleanLiteralExp in O2F_eval definition
 
     }
 
