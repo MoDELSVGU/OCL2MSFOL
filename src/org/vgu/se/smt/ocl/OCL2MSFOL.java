@@ -63,10 +63,10 @@ public class OCL2MSFOL {
 	public static void map2msfol(FileManager fm) throws IOException {
 		OCL2MSFOLVisitor visitor;
 
-//		for (Variable v : adhocContextualSet) {
-//			fm.writeln(String.format("(declare-const %s %s)", v.getName(), "Classifier"));
-//			fm.writeln(String.format("(assert (%s %s))", v.getType(), v.getName()));
-//		}
+		for (Variable v : adhocContextualSet) {
+			fm.writeln(String.format("(declare-const %s %s)", v.getName(), "Classifier"));
+			fm.writeln(String.format("(assert (%s %s))", v.getType(), v.getName()));
+		}
 		
 		defC = new HashMap<Expression, DefC>();
 
