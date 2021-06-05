@@ -60,7 +60,7 @@ public class OCL2MSFOL {
 		dm = dm_;
 	}
 
-	public static void map(FileManager fm) throws IOException {
+	public static void map2msfol(FileManager fm) throws IOException {
 		OCL2MSFOLVisitor visitor;
 
 //		for (Variable v : adhocContextualSet) {

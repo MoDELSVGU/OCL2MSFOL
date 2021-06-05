@@ -4,13 +4,16 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 
 import org.json.simple.JSONArray;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import org.vgu.dm2schema.dm.Attribute;
 import org.vgu.dm2schema.dm.DataModel;
+import org.vgu.dm2schema.dm.DmUtils;
+import org.vgu.dm2schema.dm.Entity;
 import org.vgu.se.smt.dm.DM2MSFOL;
 import org.vgu.se.smt.file.FileManager;
 import org.vgu.se.smt.logicvalue.LogicValue;
@@ -39,34 +42,58 @@ public class Main {
         FileManager fm = FileManager.getInstance();
         fm.setSafeMode(false);
         fm.init();
-        DataModel dm = setDataModelFromFile("resources\\vgu_dm.json");
         
-        List<String> oclExp = Arrays.asList(
-    		"TRUE"
-    		,"caller = self"
-    		,"caller.students->includes(self)"
-    		,"Lecturer.allInstances()->forAll(l|Student.allInstances()->forAll(s|l.students->includes(s)))"
-    		,"Lecturer.allInstances()->select(l|l = caller)->includes(self)"
-    		,"Lecturer.allInstances()->forAll(l1|Lecturer.allInstances()->forAll(l2|l1.age = l2.age))"
-    		,"Lecturer.allInstances()->forAll(l|l<>caller implies l.age < caller.age)"
-        		);
-
+        DataModel dm = setDataModelFromFile("resources\\company.json");
         DM2MSFOL.setDataModel(dm);
-        DM2MSFOL.map(fm);
+        DM2MSFOL.map2msfol(fm);
         
         OCL2MSFOL.setDataModel(dm);
-        // This is just for now.
-        fm.commentln("Ad-hoc Contextual Model");
-        OCL2MSFOL.putAdhocContextualSet("caller", "Lecturer");
-        OCL2MSFOL.putAdhocContextualSet("self", "Lecturer");
         
-        fm.commentln(oclExp.get(0));
-        OCL2MSFOL.setExpression(oclExp.get(0));
-        OCL2MSFOL.setLvalue(LogicValue.TRUE);
-        OCL2MSFOL.map(fm);
+        List<String> invariants = new ArrayList<String>();
+        for(String inv : invariants) {
+        	fm.commentln(inv);
+            OCL2MSFOL.setExpression(inv);
+            OCL2MSFOL.setLvalue(LogicValue.TRUE);
+        	OCL2MSFOL.map2msfol(fm);
+        }
+        
+        fm.commentln("Ad-hoc Contextual Model");
+        OCL2MSFOL.putAdhocContextualSet("caller", "Employee");
+        OCL2MSFOL.putAdhocContextualSet("self", "Employee");
+        OCL2MSFOL.putAdhocContextualSet("self", "Employee");
+        
+        boolean isAttribute = true;
+        String sClass = "Employee";
+        String sAattribute = "email";
 
+        if(isAttribute) {
+        	Attribute attribute = getAttribute(dm, sClass, sAattribute);
+        }
+        
+        if(authCheck != null) {
+        	fm.commentln(authCheck);
+            OCL2MSFOL.setExpression(authCheck);
+            OCL2MSFOL.setLvalue(LogicValue.TRUE);
+            OCL2MSFOL.map2msfol(fm);
+        }
+        
         fm.checkSat();
         fm.close();
+    }
+    
+    private static Attribute getAttribute(DataModel dm,
+            String className, String attName) {
+        Entity entity = dm.getEntities().get(className);
+
+        Set<Attribute> atts = entity.getAttributes();
+
+        for (Attribute att : atts) {
+            if (att.getName().equals(attName)) {
+                return att;
+            }
+        }
+
+        return null;
     }
 
     @SuppressWarnings("unused")

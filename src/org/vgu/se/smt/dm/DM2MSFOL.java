@@ -74,7 +74,7 @@ public class DM2MSFOL {
 		dm = dm_;
 	}
 
-	public static void map(FileManager fileManager) throws IOException {
+	public static void map2msfol(FileManager fileManager) throws IOException {
 		setMode(fileManager);
 		generateEntitiesTheory(fileManager);
 		generateAttributesTheory(fileManager);
@@ -87,6 +87,7 @@ public class DM2MSFOL {
 	}
 
 	private static void generateInvariants(FileManager fileManager) throws IOException {
+		fileManager.commentln("Generating invariants");
 		for (Invariants invs : dm.getInvariants()) {
 			for (Invariant inv : invs) {
 				String invLabel = inv.getLabel();
@@ -95,7 +96,7 @@ public class DM2MSFOL {
 				System.out.println(invOcl);
 				OCL2MSFOL.setExpression(invOcl);
 				fileManager.commentln(invLabel);
-				OCL2MSFOL.map(fileManager);
+				OCL2MSFOL.map2msfol(fileManager);
 			}
 		}
 	}
@@ -142,10 +143,10 @@ public class DM2MSFOL {
 						as.getOneEnd().getName()));
 				fileManager.assertln(String.format(Template.ASSOCIATION_4, as.getOneEnd().getCurrentClass(),
 						as.getOneEnd().getName(), as.getOneEnd().getTargetClass(), as.getOneEnd().getCurrentClass()));
-				fileManager.writeln(String.format(Template.ASSOCIATION, as.getManyEnd().getCurrentClass(),
-						as.getManyEnd().getName()));
-				fileManager.assertln(String.format(Template.ASSOCIATION_1, as.getManyEnd().getCurrentClass(),
-						as.getManyEnd().getName(),
+				String associationName = String.format("%s_%s", as.getManyEnd().getCurrentClass(),
+						as.getManyEnd().getName());
+				fileManager.writeln(String.format(Template.ASSOCIATION, associationName));
+				fileManager.assertln(String.format(Template.ASSOCIATION_1, associationName,
 						fileManager.isSafeMode() ? String.format("(%s x)", as.getManyEnd().getCurrentClass())
 								: getGeneralizationFormulae(dm.getEntities().get(as.getManyEnd().getCurrentClass()), "x"),
 						fileManager.isSafeMode() ? String.format("(%s y)", as.getManyEnd().getTargetClass())
