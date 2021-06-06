@@ -76,10 +76,25 @@ public class Runner {
         boolean isAttribute = true;
         
         String role = "Employee";
+        
+        List<String> callerProperties = new ArrayList<String>();
+        for(String prop : callerProperties) {
+        	fm.commentln(prop);
+            OCL2MSFOL.setExpression(prop);
+            OCL2MSFOL.setLvalue(LogicValue.TRUE);
+        	OCL2MSFOL.map2msfol(fm);
+        }
 
         if(isAttribute) {
         	String sClass = "Employee";
             String sAattribute = "email";
+            List<String> selfProperties = new ArrayList<String>();
+            for(String prop : selfProperties) {
+            	fm.commentln(prop);
+                OCL2MSFOL.setExpression(prop);
+                OCL2MSFOL.setLvalue(LogicValue.TRUE);
+            	OCL2MSFOL.map2msfol(fm);
+            }
         	String authOcl = extracted(dm, sm, sClass, sAattribute, role);
         	fm.commentln(authOcl);
             OCL2MSFOL.setExpression(authOcl);
@@ -87,6 +102,20 @@ public class Runner {
             OCL2MSFOL.map2msfol(fm);
         } else {
         	String sAssociation = "Supervision";
+        	List<String> aseLProperties = new ArrayList<String>();
+            for(String prop : aseLProperties) {
+            	fm.commentln(prop);
+                OCL2MSFOL.setExpression(prop);
+                OCL2MSFOL.setLvalue(LogicValue.TRUE);
+            	OCL2MSFOL.map2msfol(fm);
+            }
+            List<String> aseRProperties = new ArrayList<String>();
+            for(String prop : aseRProperties) {
+            	fm.commentln(prop);
+                OCL2MSFOL.setExpression(prop);
+                OCL2MSFOL.setLvalue(LogicValue.TRUE);
+            	OCL2MSFOL.map2msfol(fm);
+            }
         	String authOcl = extracted(dm, sm, role, sAssociation);
     		fm.commentln(authOcl);
             OCL2MSFOL.setExpression(authOcl);
