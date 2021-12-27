@@ -15,7 +15,6 @@ import org.json.simple.parser.ParseException;
 import org.vgu.dm2schema.dm.Association;
 import org.vgu.dm2schema.dm.Attribute;
 import org.vgu.dm2schema.dm.DataModel;
-import org.vgu.dm2schema.dm.DmUtils;
 import org.vgu.dm2schema.dm.Entity;
 import org.vgu.se.smt.dm.DM2MSFOL;
 import org.vgu.se.smt.file.FileManager;
@@ -23,10 +22,7 @@ import org.vgu.se.smt.logicvalue.LogicValue;
 import org.vgu.se.smt.ocl.OCL2MSFOL;
 import org.vgu.sqlsi.sec.Auth;
 import org.vgu.sqlsi.sec.SecPolicyModel;
-import org.vgu.sqlsi.sec.SecRuleModel;
 import org.vgu.sqlsi.sec.SecUnitRule;
-import org.vgu.sqlsi.sec.SecurityMode;
-import org.vgu.sqlsi.sql.func.SQLSIAuthFunction;
 import org.vgu.sqlsi.utils.FunctionUtils;
 import org.vgu.sqlsi.utils.RuleUtils;
 
@@ -54,14 +50,15 @@ public class Runner {
         fm.setSafeMode(false);
         fm.init();
         
-        DataModel dm = setDataModelFromFile("resources\\company.json");
-        SecPolicyModel sm = setSecurityModelFromFile("resources\\policy.json");
+        DataModel dm = setDataModelFromFile("resources\\vgu_dm.json");
+//        SecPolicyModel sm = setSecurityModelFromFile("resources\\policy.json");
         DM2MSFOL.setDataModel(dm);
         DM2MSFOL.map2msfol(fm);
         
         OCL2MSFOL.setDataModel(dm);
         
         List<String> invariants = new ArrayList<String>();
+        invariants.add("Student.allInstances()->select(s|s.age < 19)->isEmpty()");
         for(String inv : invariants) {
         	fm.commentln(inv);
             OCL2MSFOL.setExpression(inv);
@@ -70,14 +67,15 @@ public class Runner {
         }
         
         fm.commentln("Ad-hoc Contextual Model");
-        OCL2MSFOL.putAdhocContextualSet("kcaller", "Employee");
-        OCL2MSFOL.putAdhocContextualSet("kself", "Employee");
+        OCL2MSFOL.putAdhocContextualSet("caller", "Lecturer");
+        OCL2MSFOL.putAdhocContextualSet("self", "Lecturer");
         
-        boolean isAttribute = true;
+//        boolean isAttribute = true;
         
-        String role = "Employee";
+//        String role = "Employee";
         
         List<String> callerProperties = new ArrayList<String>();
+//        callerProperties.add("Lecturer.allInstances()->select(l|l.age <= caller.age)->isEmpty()");
         for(String prop : callerProperties) {
         	fm.commentln(prop);
             OCL2MSFOL.setExpression(prop);
@@ -85,48 +83,49 @@ public class Runner {
         	OCL2MSFOL.map2msfol(fm);
         }
 
-        if(isAttribute) {
-        	String sClass = "Employee";
-            String sAattribute = "email";
-            List<String> selfProperties = new ArrayList<String>();
-            for(String prop : selfProperties) {
-            	fm.commentln(prop);
-                OCL2MSFOL.setExpression(prop);
-                OCL2MSFOL.setLvalue(LogicValue.TRUE);
-            	OCL2MSFOL.map2msfol(fm);
-            }
-        	String authOcl = extracted(dm, sm, sClass, sAattribute, role);
-        	fm.commentln(authOcl);
-            OCL2MSFOL.setExpression(authOcl);
-            OCL2MSFOL.setLvalue(LogicValue.TRUE);
-            OCL2MSFOL.map2msfol(fm);
-        } else {
-        	String sAssociation = "Supervision";
-        	List<String> aseLProperties = new ArrayList<String>();
-            for(String prop : aseLProperties) {
-            	fm.commentln(prop);
-                OCL2MSFOL.setExpression(prop);
-                OCL2MSFOL.setLvalue(LogicValue.TRUE);
-            	OCL2MSFOL.map2msfol(fm);
-            }
-            List<String> aseRProperties = new ArrayList<String>();
-            for(String prop : aseRProperties) {
-            	fm.commentln(prop);
-                OCL2MSFOL.setExpression(prop);
-                OCL2MSFOL.setLvalue(LogicValue.TRUE);
-            	OCL2MSFOL.map2msfol(fm);
-            }
-        	String authOcl = extracted(dm, sm, role, sAssociation);
-    		fm.commentln(authOcl);
-            OCL2MSFOL.setExpression(authOcl);
-            OCL2MSFOL.setLvalue(LogicValue.TRUE);
-            OCL2MSFOL.map2msfol(fm);
-        }
+//        if(isAttribute) {
+//        	String sClass = "Employee";
+//            String sAattribute = "email";
+//            List<String> selfProperties = new ArrayList<String>();
+//            for(String prop : selfProperties) {
+//            	fm.commentln(prop);
+//                OCL2MSFOL.setExpression(prop);
+//                OCL2MSFOL.setLvalue(LogicValue.TRUE);
+//            	OCL2MSFOL.map2msfol(fm);
+//            }
+//        	String authOcl = extracted(dm, sm, sClass, sAattribute, role);
+//        	fm.commentln(authOcl);
+//            OCL2MSFOL.setExpression(authOcl);
+//            OCL2MSFOL.setLvalue(LogicValue.TRUE);
+//            OCL2MSFOL.map2msfol(fm);
+//        } else {
+//        	String sAssociation = "Supervision";
+//        	List<String> aseLProperties = new ArrayList<String>();
+//            for(String prop : aseLProperties) {
+//            	fm.commentln(prop);
+//                OCL2MSFOL.setExpression(prop);
+//                OCL2MSFOL.setLvalue(LogicValue.TRUE);
+//            	OCL2MSFOL.map2msfol(fm);
+//            }
+//            List<String> aseRProperties = new ArrayList<String>();
+//            for(String prop : aseRProperties) {
+//            	fm.commentln(prop);
+//                OCL2MSFOL.setExpression(prop);
+//                OCL2MSFOL.setLvalue(LogicValue.TRUE);
+//            	OCL2MSFOL.map2msfol(fm);
+//            }
+//        	String authOcl = extracted(dm, sm, role, sAssociation);
+//    		fm.commentln(authOcl);
+//            OCL2MSFOL.setExpression(authOcl);
+//            OCL2MSFOL.setLvalue(LogicValue.TRUE);
+//            OCL2MSFOL.map2msfol(fm);
+//        }
         
         fm.checkSat();
         fm.close();
     }
 
+	@SuppressWarnings("unused")
 	private static String extracted(DataModel dm, SecPolicyModel sm, String role, String sAssociation) {
 		Association association = getAssociation(dm,sAssociation);
 		List<SecUnitRule> rules = RuleUtils.getAllUnitRules(sm);
@@ -161,6 +160,7 @@ public class Runner {
         return null;
 	}
 
+	@SuppressWarnings("unused")
 	private static String extracted(DataModel dm, SecPolicyModel sm, String sClass, String sAattribute, String role) {
 		Entity entity = dm.getEntities().get(sClass);
 		Attribute attribute = getAttribute(dm, sClass, sAattribute);
@@ -185,6 +185,7 @@ public class Runner {
 		return authOcl;
 	}
 
+	@SuppressWarnings("unused")
 	private static SecPolicyModel setSecurityModelFromFile(String securityModelURI) throws FileNotFoundException, IOException, ParseException {
     	File policyFile = new File(securityModelURI);
 		JSONArray secureUMLJSONArray = (JSONArray) new JSONParser().parse(new FileReader(policyFile));
