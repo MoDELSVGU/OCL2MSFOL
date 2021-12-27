@@ -60,7 +60,7 @@ public class O2F_EvalVisitor extends OCL2MSFOLVisitor {
 		case select:
 	    	defCVisitor = new O2F_DefCVisitor(dm,adhocContextualSet,defC);
 	    	iteratorExp.accept(defCVisitor);
-	    	String defCNameApplied = defC.get(iteratorExp).nameApplied;
+	    	String defCNameApplied = defC.get(iteratorExp).getNameApplied();
 	    	this.setFOLFormulae(String.format(defCNameApplied, "%s"));
 	    	break;
 		default:

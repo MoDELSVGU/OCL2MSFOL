@@ -19,8 +19,10 @@ limitations under the License.
 package org.vgu.se.smt.ocl;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -50,6 +52,10 @@ public class OCL2MSFOL {
 			exp = (OclExp) exp_;
 	}
 
+	public static void setExpression(OclExp oclexp) {
+		exp = oclexp;
+	}
+
 	public static void putAdhocContextualSet(String vName, String vType) {
 		Variable v = new Variable(vName, new Type(vType));
 		adhocContextualSet.remove(v);
@@ -67,7 +73,7 @@ public class OCL2MSFOL {
 			fm.writeln(String.format("(declare-const %s %s)", v.getName(), "Classifier"));
 			fm.writeln(String.format("(assert (%s %s))", v.getType(), v.getName()));
 		}
-		
+
 		defC = new HashMap<Expression, DefC>();
 
 		if (lvalue == LogicValue.INVALID) {
@@ -80,13 +86,51 @@ public class OCL2MSFOL {
 			visitor = new O2F_TrueVisitor(dm, adhocContextualSet, defC);
 		}
 		exp.accept(visitor);
-		
+
 		for (DefC d : defC.values()) {
-			fm.writeln(String.format("(declare-fun %s)", d.nameDefinition));
-			fm.assertln(d.assertion);
+			fm.writeln(String.format("(declare-fun %s)", d.getNameDefinition()));
+			fm.assertln(d.getAssertion());
+		}
+
+		fm.assertln(visitor.getFOLFormulae());
+	}
+	
+	public static List<String> map2msfol(boolean negation) {
+		OCL2MSFOLVisitor visitor;
+
+		List<String> formulas = new ArrayList<>();
+		for (Variable v : adhocContextualSet) {
+			formulas.add(String.format("(declare-const %s %s)", v.getName(), "Classifier"));
+			formulas.add(String.format("(assert (%s %s))", v.getType(), v.getName()));
+		}
+
+		defC = new HashMap<Expression, DefC>();
+
+		if (lvalue == LogicValue.INVALID) {
+			visitor = new O2F_InvalidVisitor(dm, adhocContextualSet, defC);
+		} else if (lvalue == LogicValue.FALSE) {
+			visitor = new O2F_FalseVisitor(dm, adhocContextualSet, defC);
+		} else if (lvalue == LogicValue.NULL) {
+			visitor = new O2F_NullVisitor(dm, adhocContextualSet, defC);
+		} else {
+			visitor = new O2F_TrueVisitor(dm, adhocContextualSet, defC);
+		}
+		exp.accept(visitor);
+
+		for (DefC d : defC.values()) {
+			formulas.add(String.format("(declare-fun %s)", d.getNameDefinition()));
+			formulas.add(String.format("(assert %s)", d.getAssertion()));
+		}
+
+//		formulas.add(visitor.getFOLFormulae());
+		//TODO: Temporary change
+		if (negation) {
+			formulas.add(String.format("(assert (not %s))", visitor.getFOLFormulae()));
+		} else {
+			formulas.add(String.format("(assert %s)", visitor.getFOLFormulae()));
 		}
 		
-		fm.assertln(visitor.getFOLFormulae());
+		return formulas;
 	}
 
 	public static LogicValue getLvalue() {

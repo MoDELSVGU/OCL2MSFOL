@@ -46,13 +46,13 @@ public class O2F_DefCVisitor extends OCL2MSFOLVisitor {
 			if (fVars.isEmpty()) {
 			String arguments = "Classifier";
 			DefC defCElement = new DefC();
-			defCElement.nameDefinition = String.format("%s (%s) Bool", newDefCName, arguments);
-			defCElement.nameApplied = String.format("(%s %s)", newDefCName, "%s");
+			defCElement.setNameDefinition(String.format("%s (%s) Bool", newDefCName, arguments));
+			defCElement.setNameApplied(String.format("(%s %s)", newDefCName, "%s"));
 			defC.put(iteratorExp, defCElement);
 			String var = iteratorExp.getIterator().getName();
 			String type = "Classifier";
 			String template = Template.Def_c.select_1;
-			String firstArgument = app(defCElement.nameApplied, fVars, var);
+			String firstArgument = app(defCElement.getNameApplied(), fVars, var);
 			evalVisitor = new O2F_EvalVisitor(dm, adhocContextualSet, defC);
 			
 			Expression sourceExp = (OclExp) iteratorExp.getSource();
@@ -66,7 +66,7 @@ public class O2F_DefCVisitor extends OCL2MSFOLVisitor {
 			bodyExp.accept(trueVisitor);
 			String thirdArgument = trueVisitor.getFOLFormulae();
 
-			defCElement.assertion = String.format(template, var, type, firstArgument, secondArgument, thirdArgument);
+			defCElement.setAssertion(String.format(template, var, type, firstArgument, secondArgument, thirdArgument));
 			} else {
 //				String template = Template.Def_c.select_0;
 			}

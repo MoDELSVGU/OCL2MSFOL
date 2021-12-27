@@ -73,6 +73,120 @@ public class DM2MSFOL {
 	public static void setDataModel(DataModel dm_) {
 		dm = dm_;
 	}
+	
+	public static List<String> map2msfol(DataModel dm_) {
+		setDataModel(dm_);
+		List<String> formulas = new ArrayList<String>();
+		formulas.addAll(generateEntitiesTheory());
+		formulas.addAll(generateAttributesTheory());
+		formulas.addAll(generateAssociationEndsTheory());
+		formulas.addAll(generateAuxiliaryTheory());
+		return formulas;
+	}
+
+	private static List<String> generateAuxiliaryTheory() {
+		List<String> formulas = new ArrayList<String>();
+		for (Entity e : dm.getEntities().values()) {
+			List<Entity> exclusion = new ArrayList<Entity>();
+			for (Entity e_ : dm.getEntities().values()) {
+				if (e_ != e) {
+					exclusion.add(e_);
+				}
+			}
+			if (exclusion.isEmpty()) {
+				break;
+			} else if (exclusion.size() == 1) {
+				String s = String.format("(%s x)", exclusion.get(0).getName());
+				formulas.add(String.format(Template.ENTITY_2, e.getName(), s));
+			} else {
+				String s = "";
+				for (Entity e_ : exclusion) {
+					s = s.concat(String.format(" (%s x)", e_.getName()));
+				}
+				String s_ = String.format("(or%s)", s);
+				formulas.add(String.format(Template.ENTITY_2, e.getName(), s_));
+			}
+		}
+		return formulas;
+	}
+
+	private static List<String> generateAssociationEndsTheory() {
+		List<String> formulas = new ArrayList<String>();
+		for (Association as : dm.getAssociations()) {
+			if (as.isManyToMany()) {
+				formulas.add(String.format(Template.ASSOCIATION, as.getName()));
+				String lhs = String.format("(%s x)", as.getLeftEntityName());
+				String rhs = String.format("(%s y)", as.getRightEntityName());
+				formulas.add(String.format(Template.ASSOCIATION_1, as.getName(), lhs, rhs));
+			} else if (as.isManyToOne()) {
+				formulas.add(String.format(Template.ASSOCIATION_2, as.getOneEnd().getCurrentClass(),
+						as.getOneEnd().getName()));
+				formulas.add(String.format(Template.ASSOCIATION_3, as.getOneEnd().getCurrentClass(),
+						as.getOneEnd().getName()));
+				formulas.add(String.format(Template.ASSOCIATION_3_BIS, as.getOneEnd().getCurrentClass(),
+						as.getOneEnd().getName()));
+				formulas.add(String.format(Template.ASSOCIATION_4, as.getOneEnd().getCurrentClass(),
+						as.getOneEnd().getName(), as.getOneEnd().getTargetClass(), as.getOneEnd().getCurrentClass()));
+				String associationName = String.format("%s_%s", as.getManyEnd().getCurrentClass(),
+						as.getManyEnd().getName());
+				formulas.add(String.format(Template.ASSOCIATION, associationName));
+				formulas.add(String.format(Template.ASSOCIATION_1, associationName, String.format("(%s x)", as.getManyEnd().getCurrentClass()),
+						String.format("(%s y)", as.getManyEnd().getTargetClass())));
+				formulas.add(String.format(Template.ASSOCIATION_5, as.getManyEnd().getCurrentClass(),
+						as.getManyEnd().getTargetClass(), as.getManyEnd().getOpp(), as.getManyEnd().getName()));
+				formulas.add(String.format(Template.ASSOCIATION_6, as.getManyEnd().getCurrentClass(),
+						as.getManyEnd().getName(), as.getManyEnd().getTargetClass(), as.getManyEnd().getOpp()));
+			} else {
+				// Implement one-to-one transformation from DM2MSFOL
+			}
+		}
+		return formulas;
+	}
+
+	private static List<String> generateAttributesTheory() {
+		List<String> formulas = new ArrayList<String>();
+		for (Entity e : dm.getEntities().values()) {
+			formulas.addAll(generateAttributesEntityTheory(e));
+		}
+		return formulas;
+	}
+
+	private static List<String> generateAttributesEntityTheory(Entity e) {
+		List<String> formulas = new ArrayList<String>();
+		formulas.add(String.format(Template.ENTITY_1_BIS, e.getName()));
+		for (Attribute at : e.getAttributes()) {
+			formulas.addAll(generateAttributeEntityTheory(e, at));
+		}
+		return formulas;
+	}
+
+	private static List<String> generateAttributeEntityTheory(Entity e, Attribute at) {
+		List<String> formulas = new ArrayList<String>();
+		formulas.add(String.format(Template.ATTRIBUTE, at.getName(), e.getName(),
+				at.getType().compareTo("String") == 0 ? "String" : "Int"));
+		formulas.add(String.format(Template.ATTRIBUTE_1, at.getName(), e.getName(),
+				at.getType().compareTo("String") == 0 ? "String" : "Int"));
+		formulas.add(String.format(Template.ATTRIBUTE_1_BIS, at.getName(), e.getName(),
+				at.getType().compareTo("String") == 0 ? "String" : "Int"));
+		formulas.add(String.format(Template.ATTRIBUTE_2, e.getName(), at.getName(),
+				e.getName(), at.getType().compareTo("String") == 0 ? "String" : "Int"));
+		return formulas;
+	}
+
+	private static List<String> generateEntitiesTheory() {
+		List<String> formulas = new ArrayList<String>();
+		for (Entity entity : dm.getEntities().values()) {
+			formulas.addAll(generateEntityTheory(entity));
+		}
+		return formulas;
+	}
+
+	private static List<String> generateEntityTheory(Entity e) {
+		List<String> formulas = new ArrayList<String>();
+		formulas.add(String.format(Template.ENTITY, e.getName()));
+		formulas.add(String.format(Template.ENTITY_1, e.getName()));
+		return formulas;
+	}
 
 	public static void map2msfol(FileManager fileManager) throws IOException {
 		setMode(fileManager);
