@@ -1,9 +1,0 @@
-[submodule "SQLTranslator"]
-	path = SQLTranslator
-	url = https://github.com/SE-at-VGU/SQLTranslator.git
-[submodule "JavaOCL"]
-	path = JavaOCL
-	url = https://github.com/SE-at-VGU/JavaOCL.git
-[submodule "SQLSI"]
-	path = SQLSI
-	url = https://github.com/SE-at-VGU/SQLSI.git
