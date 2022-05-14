@@ -32,60 +32,51 @@ import org.vgu.se.smt.ocl.OCL2MSFOL;
 
 public class Runner {
     public static void main(String[] args) throws ParseException, Exception {
+    	final String generatedFileName = "resources//test.smt2";
+    	final String datamodelFileName = "resources\\datamodel.json";
+    	
+    	// A file manager is a singleton in charge of writing the MSFOL theory.
         FileManager fm = FileManager.getInstance();
+        // enable safemode will ignore the invalid logic value.
         fm.setSafeMode(false);
-        fm.open("resources//test.smt2");
+        // create a file and ready to write
+        fm.open(generatedFileName);
+        // init MSFOL theory (some headers, auxiliary definitions) 
         fm.init();
         
-        DataModel dm = setDataModelFromFile("resources\\vgu_dm.json");
+        // Get datamodel from file
+        DataModel dm = setDataModelFromFile(datamodelFileName);
+        // Set the datamodel to the current datamodel of the application
         DM2MSFOL.setDataModel(dm);
+        // Print the MSFOL for the datamodel
         DM2MSFOL.map2msfol(fm);
         
+        // Set the current datamodel as the contextual model for the OCL expression
         OCL2MSFOL.setDataModel(dm);
         
-//        Case 1: true
-//        String inv = "true";
+        // Specify OCL constraint to be translated
+        String inv = "true";
         
-//        Case 2: caller.students->isEmpty
-//        OCL2MSFOL.putAdhocContextualSet("caller", "Lecturer");
-//        String inv = "caller.students->isEmpty()";
-        
-//        Case 3: self.age >= 18
-        OCL2MSFOL.putAdhocContextualSet("self", "Student");
-        String inv = "self.age >= 18";
-        
-//        Case 4: Student.allInstances()->forAll(s|s.lecturers->forAll(l|l.age > s.age))
-//        String inv = "Student.allInstances()->forAll(s|s.lecturers->forAll(l|l.age > s.age))";
-
-//        Case 5: caller.age = self.age
-//        OCL2MSFOL.putAdhocContextualSet("self", "Student");
-//        OCL2MSFOL.putAdhocContextualSet("caller", "Lecturer");
-//        String inv = "caller.age = self.age";
-        
-//        Case 6, 7, 8: self.name = user
-//        OCL2MSFOL.putAdhocContextualSet("self", "Student");
-//        OCL2MSFOL.putAdhocContextualSet("user", "String");
-//        String inv = "self.name = user";
-        
+        // Adding the constraints as a comment (for the ease of navigation)
         fm.commentln(inv);
+        // Set the expression as the source expression to translate
         OCL2MSFOL.setExpression(inv);
+        // Set mode (either TRUE, FALSE, NULL or INVALID)
         OCL2MSFOL.setLvalue(LogicValue.TRUE);
+        // Perform the mapping
     	OCL2MSFOL.map2msfol(fm);
     	
+    	// Close the FileManager to save the file
     	fm.close();
     }
 
     private static DataModel setDataModelFromFile(String filePath)
         throws FileNotFoundException, IOException, ParseException, Exception {
-        return transformToDataModel(filePath);
-    }
-
-    private static DataModel transformToDataModel(String dataModelURI)
-        throws IOException, ParseException, FileNotFoundException, Exception {
-        File dataModelFile = new File(dataModelURI);
+    	File dataModelFile = new File(filePath);
         JSONArray dataModelJSONArray = (JSONArray) new JSONParser()
             .parse(new FileReader(dataModelFile));
         DataModel context = new DataModel(dataModelJSONArray);
         return context;
     }
+
 }
