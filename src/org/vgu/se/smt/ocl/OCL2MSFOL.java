@@ -70,8 +70,12 @@ public class OCL2MSFOL {
 		OCL2MSFOLVisitor visitor;
 
 		for (Variable v : adhocContextualSet) {
-			fm.writeln(String.format("(declare-const %s %s)", v.getName(), "Classifier"));
-			fm.writeln(String.format("(assert (%s %s))", v.getType(), v.getName()));
+			if ("String".equals(v.getType().getReferredType()) || "Integer".equals(v.getType().getReferredType())) {
+				fm.writeln(String.format("(declare-const %s %s)", v.getName(), v.getType()));
+			} else {
+				fm.writeln(String.format("(declare-const %s %s)", v.getName(), "Classifier"));
+				fm.writeln(String.format("(assert (%s %s))", v.getType(), v.getName()));
+			}
 		}
 
 		defC = new HashMap<Expression, DefC>();
@@ -86,10 +90,14 @@ public class OCL2MSFOL {
 			visitor = new O2F_TrueVisitor(dm, adhocContextualSet, defC);
 		}
 		exp.accept(visitor);
+		
 
 		for (DefC d : defC.values()) {
 			fm.writeln(String.format("(declare-fun %s)", d.getNameDefinition()));
 			fm.assertln(d.getAssertion());
+		}
+		for (String constraint : visitor.additionalConstraints) {
+			fm.assertln(constraint);
 		}
 
 		fm.assertln(visitor.getFOLFormulae());

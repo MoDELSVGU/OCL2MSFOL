@@ -17,6 +17,7 @@ limitations under the License.
 
 package org.vgu.se.smt.ocl;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -34,6 +35,7 @@ public abstract class OCL2MSFOLVisitor implements ParserVisitor {
     protected DataModel dm;
     protected Set<Variable> adhocContextualSet = new HashSet<>();
     protected Map<Expression, DefC> defC = new HashMap<Expression, DefC>();
+    protected List<String> additionalConstraints = new ArrayList<String>();
     
     protected O2F_NullVisitor nullVisitor;
     protected O2F_TrueVisitor trueVisitor;
@@ -58,6 +60,10 @@ public abstract class OCL2MSFOLVisitor implements ParserVisitor {
     
     public void setFOLFormulae(String fol) {
         this.fol = fol;
+    }
+    
+    public void addConstraint(String constraint) {
+    	this.additionalConstraints.add(constraint);
     }
 
     protected String app(String folFormulae, List<Variable> fvExp, String var) {

@@ -17,7 +17,7 @@
 		],
 		"ends": [
 			{
-				"association": "Enrollment",
+				"association": "Enrolment",
 				"name": "students",
 				"target": "Student",
 				"opp": "lecturers",
@@ -29,6 +29,10 @@
 		"class": "Student",
 		"attributes": [
 			{
+				"name": "name",
+				"type": "String"
+			},
+			{
 				"name": "email",
 				"type": "String"
 			},
@@ -39,7 +43,7 @@
 		],
 		"ends": [
 			{
-				"association": "Enrollment",
+				"association": "Enrolment",
 				"name": "lecturers",
 				"target": "Lecturer",
 				"opp": "students",

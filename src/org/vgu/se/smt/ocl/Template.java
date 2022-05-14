@@ -108,6 +108,9 @@ public class Template {
 
 	public static class Eval {
 		public static String intLiteral = "%s";
+		public static String intLiteralConstraints = "(and (distinct %1$s nullInt) (distinct %1$s invalidInt))";
+		public static String stringLiteral = "%s";
+		public static String stringLiteralConstraints = "(and (distinct %1$s nullInt) (distinct %1$s invalidInt))";
 		public static String variable = "%s";
 		public static String allInstances = "(%s %s)";
 		public static String attribute = "(%1$s_%3$s %2$s)";

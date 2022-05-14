@@ -21,7 +21,6 @@ limitations under the License.
 ***************************************************************************/
 
 public final class FileManager {
-    private static String fileName = "resources\\test.smt2";
     private static FileWriter fileWriter;
     private static final FileManager INSTANCE = new FileManager();
     private boolean safeMode = true;
@@ -38,7 +37,7 @@ public final class FileManager {
         fileWriter.close();
     }
     
-    public void open() throws IOException {
+    public void open(String fileName) throws IOException {
         fileWriter = new FileWriter(fileName);
     }
     
@@ -58,7 +57,6 @@ public final class FileManager {
     }
 
     public void init() throws IOException {
-        open();
         writeln("(set-logic UFSLIA)");
         writeln("(set-option :produce-models true)");
         writeln("(declare-sort Classifier 0)");

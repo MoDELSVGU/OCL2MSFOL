@@ -1,0 +1,6 @@
+[submodule "datamodel"]
+	path = datamodel
+	url = https://github.com/MoDELSVGU/datamodel.git
+[submodule "JavaOCL"]
+	path = JavaOCL
+	url = https://github.com/MoDELSVGU/JavaOCL.git

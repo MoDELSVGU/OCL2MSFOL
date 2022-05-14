@@ -44,29 +44,32 @@ public class O2F_DefCVisitor extends OCL2MSFOLVisitor {
 			String newDefCName = "TEMP" + String.valueOf(defC.size());
 			List<Variable> fVars = VariableUtils.FVars(iteratorExp);
 			if (fVars.isEmpty()) {
-			String arguments = "Classifier";
-			DefC defCElement = new DefC();
-			defCElement.setNameDefinition(String.format("%s (%s) Bool", newDefCName, arguments));
-			defCElement.setNameApplied(String.format("(%s %s)", newDefCName, "%s"));
-			defC.put(iteratorExp, defCElement);
-			String var = iteratorExp.getIterator().getName();
-			String type = "Classifier";
-			String template = Template.Def_c.select_1;
-			String firstArgument = app(defCElement.getNameApplied(), fVars, var);
-			evalVisitor = new O2F_EvalVisitor(dm, adhocContextualSet, defC);
-			
-			Expression sourceExp = (OclExp) iteratorExp.getSource();
-			List<Variable> fVarsSrc = VariableUtils.FVars(sourceExp);
-			evalVisitor = new O2F_EvalVisitor(dm, adhocContextualSet, defC);
-			sourceExp.accept(evalVisitor);
-			String secondArgument = app(evalVisitor.getFOLFormulae(), fVarsSrc, var);
+				String arguments = "Classifier";
+				DefC defCElement = new DefC();
+				defCElement.setNameDefinition(String.format("%s (%s) Bool", newDefCName, arguments));
+				defCElement.setNameApplied(String.format("(%s %s)", newDefCName, "%s"));
+				defC.put(iteratorExp, defCElement);
+				String var = iteratorExp.getIterator().getName();
+				String type = "Classifier";
+				String template = Template.Def_c.select_1;
+				String firstArgument = app(defCElement.getNameApplied(), fVars, var);
+				evalVisitor = new O2F_EvalVisitor(dm, adhocContextualSet, defC);
 
-			Expression bodyExp = iteratorExp.getBody();
-			trueVisitor = new O2F_TrueVisitor(dm, adhocContextualSet, defC);
-			bodyExp.accept(trueVisitor);
-			String thirdArgument = trueVisitor.getFOLFormulae();
+				Expression sourceExp = (OclExp) iteratorExp.getSource();
+				List<Variable> fVarsSrc = VariableUtils.FVars(sourceExp);
+				evalVisitor = new O2F_EvalVisitor(dm, adhocContextualSet, defC);
+				sourceExp.accept(evalVisitor);
+				this.additionalConstraints.addAll(evalVisitor.additionalConstraints);
+				String secondArgument = app(evalVisitor.getFOLFormulae(), fVarsSrc, var);
 
-			defCElement.setAssertion(String.format(template, var, type, firstArgument, secondArgument, thirdArgument));
+				Expression bodyExp = iteratorExp.getBody();
+				trueVisitor = new O2F_TrueVisitor(dm, adhocContextualSet, defC);
+				bodyExp.accept(trueVisitor);
+				this.additionalConstraints.addAll(trueVisitor.additionalConstraints);
+				String thirdArgument = trueVisitor.getFOLFormulae();
+
+				defCElement
+						.setAssertion(String.format(template, var, type, firstArgument, secondArgument, thirdArgument));
 			} else {
 //				String template = Template.Def_c.select_0;
 			}
@@ -108,7 +111,8 @@ public class O2F_DefCVisitor extends OCL2MSFOLVisitor {
 
 	@Override
 	public void visit(AssociationClassCallExp associationClassCallExp) {
-		// TODO: Implement Def_c definition for association-end expressions of case many-to-many
+		// TODO: Implement Def_c definition for association-end expressions of case
+		// many-to-many
 	}
 
 	@Override
