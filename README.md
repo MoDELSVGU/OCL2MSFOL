@@ -33,12 +33,20 @@ The following items highlight the supported subset of OCL:
 
 ## How to use
 
+### Requirements:
+- (required) `Maven 3` and `Java 1.8` (or higher).
+- (submodule) [`datamodel`](https://github.com/MoDELSVGU/datamodel) - branch: `OCL2MSFOL`.
+- (submodule) [`JavaOCL`](https://github.com/MoDELSVGU/JavaOCL) submodule - branch: `master`.
+
+The submodules will be automatically updates using `Git` commands as in the guideline.
+
+### Quick guideline:
 ```
 git clone https://github.com/npbhoang/OCL2MSFOL.git
 git submodule update --init --recursive
 ```
 
-Have a quick look at the `Runner.java` [class](https://github.com/npbhoang/OCL2MSFOL/blob/master/src/Runner.java) for a quick guidelline.
+Have a quick look at the `Runner.java` [class](https://github.com/npbhoang/OCL2MSFOL/blob/master/src/Runner.java) for a quick guideline.
 
 ### Some examples:
 
