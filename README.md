@@ -1,6 +1,6 @@
 # OCL2MSFOL: A mapping from OCL constraints to Many-sorted First-order Logic
 
-OCL2MSFOL is a _pure_ Java application that generates a Many-Sorted First-Order Logic (MSFOL) theory from an Object Constraint Language (OCL) constraint with an underlying contextual model. The mapping is _strictly_ based on [the work](https://software.imdea.org/~dania/papers/models2016.pdf) of Manuel Clavel and Carolina Dania at IMDEA Research Institute, Madrid, Spain. The detail of the mapping definition can be reviewed [here](https://software.imdea.org/~dania/tools/definitions.pdf).
+OCL2MSFOL is a _pure_ Java application that generates a Many-Sorted First-Order Logic (MSFOL) theory from an Object Constraint Language (OCL) constraint with an underlying contextual model. The mapping is _strictly_ based on [the work](https://software.imdea.org/~dania/papers/models2016.pdf) of Carolina Dania et. al. at IMDEA Research Institute, Madrid, Spain. The detail of the mapping definition can be reviewed [here](https://software.imdea.org/~dania/tools/definitions.pdf).
 
 OCL works with a four-value logic: _true_, _false_, _null_ and _invalid_. While the first two values are understood universally, 
 the last two represent undefinedness: _null_ represents unknown or undefined value whereas _invalid_ represents an error or exception.
