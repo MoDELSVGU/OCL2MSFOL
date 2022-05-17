@@ -1,3 +1,4 @@
+package org.vgu.se.smt.configurations;
 
 
 
@@ -10,7 +11,6 @@ import org.json.simple.JSONArray;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.vgu.dm2schema.dm.DataModel;
-import org.vgu.se.smt.configurations.Configuration;
 import org.vgu.se.smt.dm.DM2MSFOL;
 import org.vgu.se.smt.file.FileManager;
 import org.vgu.se.smt.logicvalue.LogicValue;
