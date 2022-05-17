@@ -56,14 +56,24 @@ public class Runner {
 
 		// Set the current datamodel as the contextual model for the OCL expression
 		OCL2MSFOL.setDataModel(dm);
-
-		// Specify OCL constraint to be translated
-		String inv = "true";
+		
+		for(Context ctx : c.getContext()) {
+			OCL2MSFOL.putAdhocContextualSet(ctx.getVar(), ctx.getType());
+		}
+		
+		OCL2MSFOL.mapContext(fm);
+		
+		for(String invariant : c.getInvariant()) {
+			fm.commentln(invariant);
+			OCL2MSFOL.setExpression(invariant);
+			OCL2MSFOL.setLvalue(LogicValue.TRUE);
+			OCL2MSFOL.map2msfol(fm);
+		}
 
 		// Adding the constraints as a comment (for the ease of navigation)
-		fm.commentln(inv);
+		fm.commentln(c.getOcl());
 		// Set the expression as the source expression to translate
-		OCL2MSFOL.setExpression(inv);
+		OCL2MSFOL.setExpression(c.getOcl());
 		// Set mode (either TRUE, FALSE, NULL or INVALID)
 		OCL2MSFOL.setLvalue(LogicValue.TRUE);
 		// Perform the mapping

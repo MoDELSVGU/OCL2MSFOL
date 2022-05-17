@@ -69,15 +69,6 @@ public class OCL2MSFOL {
 	public static void map2msfol(FileManager fm) throws IOException {
 		OCL2MSFOLVisitor visitor;
 
-		for (Variable v : adhocContextualSet) {
-			if ("String".equals(v.getType().getReferredType()) || "Integer".equals(v.getType().getReferredType())) {
-				fm.writeln(String.format("(declare-const %s %s)", v.getName(), v.getType()));
-			} else {
-				fm.writeln(String.format("(declare-const %s %s)", v.getName(), "Classifier"));
-				fm.writeln(String.format("(assert (%s %s))", v.getType(), v.getName()));
-			}
-		}
-
 		defC = new HashMap<Expression, DefC>();
 
 		if (lvalue == LogicValue.INVALID) {
@@ -100,7 +91,19 @@ public class OCL2MSFOL {
 			fm.assertln(constraint);
 		}
 
-		fm.assertln(visitor.getFOLFormulae());
+//		fm.assertln(visitor.getFOLFormulae());
+		System.out.println(visitor.getFOLFormulae());
+	}
+
+	public static void mapContext(FileManager fm) throws IOException {
+		for (Variable v : adhocContextualSet) {
+			if ("String".equals(v.getType().getReferredType()) || "Integer".equals(v.getType().getReferredType())) {
+				fm.writeln(String.format("(declare-const %s %s)", v.getName(), v.getType()));
+			} else {
+				fm.writeln(String.format("(declare-const %s %s)", v.getName(), "Classifier"));
+				fm.writeln(String.format("(assert (%s %s))", v.getType(), v.getName()));
+			}
+		}
 	}
 	
 	public static List<String> map2msfol(boolean negation) {

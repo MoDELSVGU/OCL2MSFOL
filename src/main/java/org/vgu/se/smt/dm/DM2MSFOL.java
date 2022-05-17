@@ -201,7 +201,6 @@ public class DM2MSFOL {
 	}
 
 	private static void generateInvariants(FileManager fileManager) throws IOException {
-		fileManager.commentln("Generating invariants");
 		for (Invariants invs : dm.getInvariants()) {
 			for (Invariant inv : invs) {
 				String invLabel = inv.getLabel();

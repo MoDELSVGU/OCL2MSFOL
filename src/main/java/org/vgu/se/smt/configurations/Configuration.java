@@ -12,7 +12,7 @@ public class Configuration {
 	private String ocl;
 	private String filename;
 
-	private static final String ENV_DATAMODEL = "DATAMODEL";
+	private static final String ENV_DATAMODEL = "DM";
 	private static final String ENV_CONTEXT = "CTX";
 	private static final String ENV_INVARIANTS = "INV";
 	private static final String ENV_OCL = "OCL";
@@ -67,17 +67,23 @@ public class Configuration {
 		}
 
 		final String context = env.get(ENV_CONTEXT);
-		List<String> sVars = Arrays.asList(context.split(","));
 		List<Context> vars = new ArrayList<Context>();
-		for (String sVar : sVars) {
-			String[] parts = sVar.split(":");
-			Context var = new Context(parts[0], parts[1]);
-			vars.add(var);
+		if(context != null && context != "") {
+			List<String> sVars = Arrays.asList(context.split(","));
+			for (String sVar : sVars) {
+				String[] parts = sVar.split(":");
+				Context var = new Context(parts[0], parts[1]);
+				vars.add(var);
+			}
 		}
 		setContext(vars);
 		
 		final String invariants = env.get(ENV_INVARIANTS);
-		setInvariant(Arrays.asList(invariants.split(",")));
+		List<String> sInvariants = new ArrayList<String>();
+		if(invariants != null && invariants != "") {
+			sInvariants.addAll(Arrays.asList(invariants.split(",")));
+		}
+		setInvariant(sInvariants);
 		
 		final String ocl = env.get(ENV_OCL);
 		if (ocl != null) {
