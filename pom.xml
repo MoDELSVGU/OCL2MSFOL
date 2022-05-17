@@ -48,14 +48,6 @@
 								<classpath />
 								<argument>Runner</argument>
 							</arguments>
-							<resources>
-								<resource>
-									<directory>datamodel/src/main/java</directory>
-								</resource>
-								<resource>
-									<directory>JavaOCL/src/main/java</directory>
-								</resource>
-							</resources>
 						</configuration>
 					</plugin>
 				</plugins>
