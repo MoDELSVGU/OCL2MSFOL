@@ -70,8 +70,6 @@ public class Runner {
 			OCL2MSFOL.map2msfol(fm);
 		}
 
-		// Adding the constraints as a comment (for the ease of navigation)
-		fm.commentln(c.getOcl());
 		// Set the expression as the source expression to translate
 		OCL2MSFOL.setExpression(c.getOcl());
 		// Set mode (either TRUE, FALSE, NULL or INVALID)
