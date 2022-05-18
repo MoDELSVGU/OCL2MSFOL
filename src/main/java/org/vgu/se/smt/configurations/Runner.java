@@ -67,7 +67,7 @@ public class Runner {
 			fm.commentln(invariant);
 			OCL2MSFOL.setExpression(invariant);
 			OCL2MSFOL.setLvalue(LogicValue.TRUE);
-			OCL2MSFOL.map2msfol(fm);
+			OCL2MSFOL.map2msfol(fm, true);
 		}
 
 		// Set the expression as the source expression to translate
@@ -75,7 +75,7 @@ public class Runner {
 		// Set mode (either TRUE, FALSE, NULL or INVALID)
 		OCL2MSFOL.setLvalue(LogicValue.TRUE);
 		// Perform the mapping
-		OCL2MSFOL.map2msfol(fm);
+		OCL2MSFOL.map2msfol(fm, false);
 
 		// Close the FileManager to save the file
 		fm.close();

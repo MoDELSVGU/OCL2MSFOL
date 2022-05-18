@@ -66,7 +66,7 @@ public class OCL2MSFOL {
 		dm = dm_;
 	}
 
-	public static void map2msfol(FileManager fm) throws IOException {
+	public static void map2msfol(FileManager fm, boolean isInv) throws IOException {
 		OCL2MSFOLVisitor visitor;
 
 		defC = new HashMap<Expression, DefC>();
@@ -91,8 +91,11 @@ public class OCL2MSFOL {
 			fm.assertln(constraint);
 		}
 
-//		fm.assertln(visitor.getFOLFormulae());
-		System.out.println(visitor.getFOLFormulae());
+		if (isInv) {
+			fm.assertln(visitor.getFOLFormulae());
+		} else {
+			System.out.println(visitor.getFOLFormulae());
+		}
 	}
 
 	public static void mapContext(FileManager fm) throws IOException {

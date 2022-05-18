@@ -209,7 +209,7 @@ public class DM2MSFOL {
 				System.out.println(invOcl);
 				OCL2MSFOL.setExpression(invOcl);
 				fileManager.commentln(invLabel);
-				OCL2MSFOL.map2msfol(fileManager);
+				OCL2MSFOL.map2msfol(fileManager, true);
 			}
 		}
 	}

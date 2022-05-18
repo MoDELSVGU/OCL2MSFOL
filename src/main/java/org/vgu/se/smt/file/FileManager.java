@@ -57,7 +57,7 @@ public final class FileManager {
     }
 
     public void init() throws IOException {
-        writeln("(set-logic UFSLIA)");
+        // writeln("(set-logic UFSLIA)");
         writeln("(set-option :produce-models true)");
         writeln("(declare-sort Classifier 0)");
         if(!safeMode) writeln("(declare-sort Type 0)");
