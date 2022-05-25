@@ -1,4 +1,4 @@
-package org.vgu.se.smt.configurations;
+package org.uni.se.smt.configurations;
 
 public class Context {
 	private String var;

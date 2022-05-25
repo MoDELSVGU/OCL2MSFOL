@@ -35,18 +35,21 @@ The following items highlight the supported subset of OCL:
 
 ### Requirements:
 - (required) `Maven 3` and `Java 1.8` (or higher).
-- (submodule) [`datamodel`](https://github.com/MoDELSVGU/datamodel) - branch: `OCL2MSFOL`.
-- (submodule) [`JavaOCL`](https://github.com/MoDELSVGU/JavaOCL) submodule - branch: `master`.
+- (submodule) [`datamodel`](https://github.com/models22-submission54/dm2schema) - branch: `main`.
+- (submodule) [`JavaOCL`](https://github.com/models22-submission54/JavaOCL) - branch: `main`.
 
-The submodules will be automatically updates using `Git` commands as in the guideline.
+The submodules will be automatically install using script commands as JAR files in the guideline.
 
 ### Quick guideline:
 ```
-git clone https://github.com/npbhoang/OCL2MSFOL.git
-git submodule update --init --recursive
+git clone https://github.com/models22-submission54/OCL2MSFOL.git
 ```
+and run the file `scripts.sh` to install the aforementioned packages locally:
 
-Have a quick look at the `Runner.java` [class](https://github.com/npbhoang/OCL2MSFOL/blob/master/src/Runner.java) for a quick guideline.
+```
+.\scripts.sh
+```
+To execute the tool, have a look at the example main class `Runner.java` for a quick guideline.
 
 ### Some examples:
 

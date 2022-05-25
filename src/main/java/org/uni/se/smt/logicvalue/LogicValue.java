@@ -1,4 +1,4 @@
-package org.vgu.se.smt.logicvalue;
+package org.uni.se.smt.logicvalue;
 
 public enum LogicValue {
 	TRUE,

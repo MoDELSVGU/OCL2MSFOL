@@ -1,4 +1,4 @@
-package org.vgu.se.smt.ocl;
+package org.uni.se.smt.ocl;
 
 public class DefC {
 	private String nameDefinition;

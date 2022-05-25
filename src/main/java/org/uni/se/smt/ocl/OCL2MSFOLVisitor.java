@@ -15,7 +15,7 @@ limitations under the License.
 @author: ngpbh
 ***************************************************************************/
 
-package org.vgu.se.smt.ocl;
+package org.uni.se.smt.ocl;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -24,12 +24,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.vgu.dm2schema.dm.DataModel;
-import org.vgu.dm2schema.dm.Entity;
+import org.uni.dm2schema.dm.DataModel;
+import org.uni.dm2schema.dm.Entity;
 
-import com.vgu.se.jocl.expressions.Expression;
-import com.vgu.se.jocl.expressions.Variable;
-import com.vgu.se.jocl.visit.ParserVisitor;
+import com.uni.se.jocl.expressions.Expression;
+import com.uni.se.jocl.expressions.Variable;
+import com.uni.se.jocl.visit.ParserVisitor;
+
 
 public abstract class OCL2MSFOLVisitor implements ParserVisitor {
     protected DataModel dm;

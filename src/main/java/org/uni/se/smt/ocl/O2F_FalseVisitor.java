@@ -15,29 +15,30 @@ limitations under the License.
 @author: ngpbh
 ***************************************************************************/
 
-package org.vgu.se.smt.ocl;
+package org.uni.se.smt.ocl;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.vgu.dm2schema.dm.DataModel;
+import org.uni.dm2schema.dm.DataModel;
 
-import com.vgu.se.jocl.expressions.AssociationClassCallExp;
-import com.vgu.se.jocl.expressions.BooleanLiteralExp;
-import com.vgu.se.jocl.expressions.Expression;
-import com.vgu.se.jocl.expressions.IntegerLiteralExp;
-import com.vgu.se.jocl.expressions.IteratorExp;
-import com.vgu.se.jocl.expressions.IteratorKind;
-import com.vgu.se.jocl.expressions.LiteralExp;
-import com.vgu.se.jocl.expressions.OclExp;
-import com.vgu.se.jocl.expressions.OperationCallExp;
-import com.vgu.se.jocl.expressions.PropertyCallExp;
-import com.vgu.se.jocl.expressions.StringLiteralExp;
-import com.vgu.se.jocl.expressions.TypeExp;
-import com.vgu.se.jocl.expressions.Variable;
-import com.vgu.se.jocl.expressions.VariableExp;
-import com.vgu.se.jocl.utils.VariableUtils;
+import com.uni.se.jocl.expressions.AssociationClassCallExp;
+import com.uni.se.jocl.expressions.BooleanLiteralExp;
+import com.uni.se.jocl.expressions.Expression;
+import com.uni.se.jocl.expressions.IntegerLiteralExp;
+import com.uni.se.jocl.expressions.IteratorExp;
+import com.uni.se.jocl.expressions.IteratorKind;
+import com.uni.se.jocl.expressions.LiteralExp;
+import com.uni.se.jocl.expressions.OclExp;
+import com.uni.se.jocl.expressions.OperationCallExp;
+import com.uni.se.jocl.expressions.PropertyCallExp;
+import com.uni.se.jocl.expressions.StringLiteralExp;
+import com.uni.se.jocl.expressions.TypeExp;
+import com.uni.se.jocl.expressions.Variable;
+import com.uni.se.jocl.expressions.VariableExp;
+import com.uni.se.jocl.utils.VariableUtils;
+
 
 public class O2F_FalseVisitor extends OCL2MSFOLVisitor {
 

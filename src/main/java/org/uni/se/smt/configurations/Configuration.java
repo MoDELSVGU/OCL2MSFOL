@@ -1,4 +1,4 @@
-package org.vgu.se.smt.configurations;
+package org.uni.se.smt.configurations;
 
 import java.util.ArrayList;
 import java.util.Arrays;

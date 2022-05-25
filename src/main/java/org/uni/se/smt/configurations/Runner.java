@@ -1,4 +1,4 @@
-package org.vgu.se.smt.configurations;
+package org.uni.se.smt.configurations;
 
 
 
@@ -10,14 +10,14 @@ import java.io.IOException;
 import org.json.simple.JSONArray;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
-import org.vgu.dm2schema.dm.DataModel;
-import org.vgu.se.smt.dm.DM2MSFOL;
-import org.vgu.se.smt.file.FileManager;
-import org.vgu.se.smt.logicvalue.LogicValue;
-import org.vgu.se.smt.ocl.OCL2MSFOL;
+import org.uni.dm2schema.dm.DataModel;
+import org.uni.se.smt.dm.DM2MSFOL;
+import org.uni.se.smt.file.FileManager;
+import org.uni.se.smt.logicvalue.LogicValue;
+import org.uni.se.smt.ocl.OCL2MSFOL;
 
 /**************************************************************************
- * Copyright 2020 Vietnamese-German-University
+ * Copyright 2022
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -31,7 +31,7 @@ import org.vgu.se.smt.ocl.OCL2MSFOL;
  * License for the specific language governing permissions and limitations under
  * the License.
  * 
- * @author: ngpbh
+ * @author: Anonymous Author(s)
  ***************************************************************************/
 
 public class Runner {
