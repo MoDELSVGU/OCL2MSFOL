@@ -32,7 +32,7 @@
 		<dependency>
 			<groupId>io.github.modelsvgu</groupId>
 			<artifactId>datamodelj</artifactId>
-			<version>1.0.7-ASC</version>
+			<version>1.0.8-ASC</version>
 		</dependency>
 		<dependency>
 			<groupId>io.github.modelsvgu</groupId>
