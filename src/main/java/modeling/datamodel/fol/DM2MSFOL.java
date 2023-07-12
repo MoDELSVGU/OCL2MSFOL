@@ -1,22 +1,22 @@
 /**************************************************************************
-Copyright 2020 Vietnamese-German-University
+ * Copyright 2020 Vietnamese-German-University -- 2023 ETH Zurich
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ * 
+ * @author: hoangnguyen (hoang.nguyen@inf.ethz.ch)
+ ***************************************************************************/
 
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-    http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-
-@author: ngpbh
-***************************************************************************/
-
-package org.vgu.se.smt.dm;
+package modeling.datamodel.fol;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -24,14 +24,14 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.vgu.dm2schema.dm.Association;
-import org.vgu.dm2schema.dm.Attribute;
-import org.vgu.dm2schema.dm.DataModel;
-import org.vgu.dm2schema.dm.Entity;
-import org.vgu.dm2schema.dm.Invariant;
-import org.vgu.dm2schema.dm.Invariants;
-import org.vgu.se.smt.file.FileManager;
-import org.vgu.se.smt.ocl.OCL2MSFOL;
+import modeling.data.entities.Association;
+import modeling.data.entities.Attribute;
+import modeling.data.entities.DataModel;
+import modeling.data.entities.End;
+import modeling.data.entities.Entity;
+import modeling.data.entities.Multiplicity;
+import modeling.ocl.fol.mappings.OCL2MSFOL;
+import modeling.ocl.fol.utils.FileManager;
 
 public class DM2MSFOL {
 
@@ -73,7 +73,7 @@ public class DM2MSFOL {
 	public static void setDataModel(DataModel dm_) {
 		dm = dm_;
 	}
-	
+
 	public static List<String> map2msfol(DataModel dm_) {
 		setDataModel(dm_);
 		List<String> formulas = new ArrayList<String>();
@@ -115,22 +115,21 @@ public class DM2MSFOL {
 		for (Association as : dm.getAssociations()) {
 			if (as.isManyToMany()) {
 				formulas.add(String.format(Template.ASSOCIATION, as.getName()));
-				String lhs = String.format("(%s x)", as.getLeftEntityName());
-				String rhs = String.format("(%s y)", as.getRightEntityName());
+				String lhs = String.format("(%s x)", as.getLeftEnd().getCurrentClass());
+				String rhs = String.format("(%s y)", as.getRightEnd().getCurrentClass());
 				formulas.add(String.format(Template.ASSOCIATION_1, as.getName(), lhs, rhs));
 			} else if (as.isManyToOne()) {
-				formulas.add(String.format(Template.ASSOCIATION_2, as.getOneEnd().getCurrentClass(),
-						as.getOneEnd().getName()));
-				formulas.add(String.format(Template.ASSOCIATION_3, as.getOneEnd().getCurrentClass(),
-						as.getOneEnd().getName()));
-				formulas.add(String.format(Template.ASSOCIATION_3_BIS, as.getOneEnd().getCurrentClass(),
-						as.getOneEnd().getName()));
-				formulas.add(String.format(Template.ASSOCIATION_4, as.getOneEnd().getCurrentClass(),
-						as.getOneEnd().getName(), as.getOneEnd().getTargetClass(), as.getOneEnd().getCurrentClass()));
+				End oneEnd = as.getLeftEnd().getMult() == Multiplicity.ONE ? as.getLeftEnd() : as.getRightEnd();
+				formulas.add(String.format(Template.ASSOCIATION_2, oneEnd.getCurrentClass(), oneEnd.getName()));
+				formulas.add(String.format(Template.ASSOCIATION_3, oneEnd.getCurrentClass(), oneEnd.getName()));
+				formulas.add(String.format(Template.ASSOCIATION_3_BIS, oneEnd.getCurrentClass(), oneEnd.getName()));
+				formulas.add(String.format(Template.ASSOCIATION_4, oneEnd.getCurrentClass(), oneEnd.getName(),
+						oneEnd.getTargetClass(), oneEnd.getCurrentClass()));
 				String associationName = String.format("%s_%s", as.getManyEnd().getCurrentClass(),
 						as.getManyEnd().getName());
 				formulas.add(String.format(Template.ASSOCIATION, associationName));
-				formulas.add(String.format(Template.ASSOCIATION_1, associationName, String.format("(%s x)", as.getManyEnd().getCurrentClass()),
+				formulas.add(String.format(Template.ASSOCIATION_1, associationName,
+						String.format("(%s x)", as.getManyEnd().getCurrentClass()),
 						String.format("(%s y)", as.getManyEnd().getTargetClass())));
 				formulas.add(String.format(Template.ASSOCIATION_5, as.getManyEnd().getCurrentClass(),
 						as.getManyEnd().getTargetClass(), as.getManyEnd().getOpp(), as.getManyEnd().getName()));
@@ -168,8 +167,8 @@ public class DM2MSFOL {
 				at.getType().compareTo("String") == 0 ? "String" : "Int"));
 		formulas.add(String.format(Template.ATTRIBUTE_1_BIS, at.getName(), e.getName(),
 				at.getType().compareTo("String") == 0 ? "String" : "Int"));
-		formulas.add(String.format(Template.ATTRIBUTE_2, e.getName(), at.getName(),
-				e.getName(), at.getType().compareTo("String") == 0 ? "String" : "Int"));
+		formulas.add(String.format(Template.ATTRIBUTE_2, e.getName(), at.getName(), e.getName(),
+				at.getType().compareTo("String") == 0 ? "String" : "Int"));
 		return formulas;
 	}
 
@@ -197,22 +196,22 @@ public class DM2MSFOL {
 
 		OCL2MSFOL.setDataModel(dm);
 
-		generateInvariants(fileManager);
+//		generateInvariants(fileManager);
 	}
 
-	private static void generateInvariants(FileManager fileManager) throws IOException {
-		for (Invariants invs : dm.getInvariants()) {
-			for (Invariant inv : invs) {
-				String invLabel = inv.getLabel();
-				String invOcl = inv.getOcl();
-				System.out.println(invLabel);
-				System.out.println(invOcl);
-				OCL2MSFOL.setExpression(invOcl);
-				fileManager.commentln(invLabel);
-				OCL2MSFOL.map2msfol(fileManager, true);
-			}
-		}
-	}
+//	private static void generateInvariants(FileManager fileManager) throws IOException {
+//		for (Invariants invs : dm.getInvariants()) {
+//			for (Invariant inv : invs) {
+//				String invLabel = inv.getLabel();
+//				String invOcl = inv.getOcl();
+//				System.out.println(invLabel);
+//				System.out.println(invOcl);
+//				OCL2MSFOL.setExpression(invOcl);
+//				fileManager.commentln(invLabel);
+//				OCL2MSFOL.map2msfol(fileManager, true);
+//			}
+//		}
+//	}
 
 	private static void generateAuxiliaryTheory(FileManager fileManager) throws IOException {
 		for (Entity e : dm.getEntities().values()) {
@@ -242,28 +241,29 @@ public class DM2MSFOL {
 		for (Association as : dm.getAssociations()) {
 			if (as.isManyToMany()) {
 				fileManager.writeln(String.format(Template.ASSOCIATION, as.getName()));
-				String lhs = fileManager.isSafeMode() ? String.format("(%s x)", as.getLeftEntityName())
-						: getGeneralizationFormulae(dm.getEntities().get(as.getLeftEntityName()), "x");
-				String rhs = fileManager.isSafeMode() ? String.format("(%s y)", as.getRightEntityName())
-						: getGeneralizationFormulae(dm.getEntities().get(as.getRightEntityName()), "y");
+				String lhs = fileManager.isSafeMode() ? String.format("(%s x)", as.getLeftEnd().getCurrentClass())
+						: getGeneralizationFormulae(dm.getEntities().get(as.getLeftEnd().getCurrentClass()), "x");
+				String rhs = fileManager.isSafeMode() ? String.format("(%s y)", as.getRightEnd().getCurrentClass())
+						: getGeneralizationFormulae(dm.getEntities().get(as.getRightEnd().getCurrentClass()), "y");
 				fileManager.assertln(String.format(Template.ASSOCIATION_1, as.getName(), lhs, rhs));
 			} else if (as.isManyToOne()) {
-				fileManager.writeln(String.format(Template.ASSOCIATION_2, as.getOneEnd().getCurrentClass(),
-						as.getOneEnd().getName()));
-				fileManager.assertln(String.format(Template.ASSOCIATION_3, as.getOneEnd().getCurrentClass(),
-						as.getOneEnd().getName()));
-				fileManager.assertln(String.format(Template.ASSOCIATION_3_BIS, as.getOneEnd().getCurrentClass(),
-						as.getOneEnd().getName()));
-				fileManager.assertln(String.format(Template.ASSOCIATION_4, as.getOneEnd().getCurrentClass(),
-						as.getOneEnd().getName(), as.getOneEnd().getTargetClass(), as.getOneEnd().getCurrentClass()));
+				End oneEnd = as.getLeftEnd().getMult() == Multiplicity.ONE ? as.getLeftEnd() : as.getRightEnd();
+				fileManager.writeln(String.format(Template.ASSOCIATION_2, oneEnd.getCurrentClass(), oneEnd.getName()));
+				fileManager.assertln(String.format(Template.ASSOCIATION_3, oneEnd.getCurrentClass(), oneEnd.getName()));
+				fileManager.assertln(
+						String.format(Template.ASSOCIATION_3_BIS, oneEnd.getCurrentClass(), oneEnd.getName()));
+				fileManager.assertln(String.format(Template.ASSOCIATION_4, oneEnd.getCurrentClass(), oneEnd.getName(),
+						oneEnd.getTargetClass(), oneEnd.getCurrentClass()));
 				String associationName = String.format("%s_%s", as.getManyEnd().getCurrentClass(),
 						as.getManyEnd().getName());
 				fileManager.writeln(String.format(Template.ASSOCIATION, associationName));
 				fileManager.assertln(String.format(Template.ASSOCIATION_1, associationName,
 						fileManager.isSafeMode() ? String.format("(%s x)", as.getManyEnd().getCurrentClass())
-								: getGeneralizationFormulae(dm.getEntities().get(as.getManyEnd().getCurrentClass()), "x"),
+								: getGeneralizationFormulae(dm.getEntities().get(as.getManyEnd().getCurrentClass()),
+										"x"),
 						fileManager.isSafeMode() ? String.format("(%s y)", as.getManyEnd().getTargetClass())
-								: getGeneralizationFormulae(dm.getEntities().get(as.getManyEnd().getTargetClass()), "y")));
+								: getGeneralizationFormulae(dm.getEntities().get(as.getManyEnd().getTargetClass()),
+										"y")));
 				fileManager.assertln(String.format(Template.ASSOCIATION_5, as.getManyEnd().getCurrentClass(),
 						as.getManyEnd().getTargetClass(), as.getManyEnd().getOpp(), as.getManyEnd().getName()));
 				fileManager.assertln(String.format(Template.ASSOCIATION_6, as.getManyEnd().getCurrentClass(),
@@ -370,14 +370,15 @@ public class DM2MSFOL {
 	}
 
 	private static boolean isSuperClass(Entity e, Entity _e) {
-		if (_e.getName() == e.getName())
-			return false;
-		if (_e.getSuperClass() == null) {
-			return false;
-		}
-		if (_e.getSuperClass().getName() != e.getName()) {
-			return isSuperClass(e, _e.getSuperClass());
-		}
-		return true;
+//		if (_e.getName() == e.getName())
+//			return false;
+//		if (_e.getSuperClass() == null) {
+//			return false;
+//		}
+//		if (_e.getSuperClass().getName() != e.getName()) {
+//			return isSuperClass(e, _e.getSuperClass());
+//		}
+//		return true;
+		return false;
 	}
 }
