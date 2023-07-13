@@ -35,45 +35,27 @@ The following items highlight the supported subset of OCL:
 
 ### Requirements:
 - (required) `Maven 3` and `Java 1.8` (or higher).
-- (submodule) [`datamodel`](https://github.com/MoDELSVGU/datamodel) - branch: `OCL2MSFOL`.
-- (submodule) [`JavaOCL`](https://github.com/MoDELSVGU/JavaOCL) submodule - branch: `master`.
-
-The submodules will be automatically updates using `Git` commands as in the guideline.
 
 ### Quick guideline:
+Users can either clone this repository directly or pull it as package from the Maven Central.
 ```
-git clone https://github.com/npbhoang/OCL2MSFOL.git
-git submodule update --init --recursive
+<dependency>
+  <groupId>io.github.modelsvgu</groupId>
+  <artifactId>OCL2MSFOL</artifactId>
+  <version>1.0.1</version>
+</dependency>
 ```
 
-Have a quick look at the `Runner.java` [class](https://github.com/npbhoang/OCL2MSFOL/blob/master/src/Runner.java) for a quick guideline.
+### For usage
+Have a quick look at the `Runner.java` [class](https://github.com/MoDELSVGU/OCL2MSFOL/blob/Clean/src/main/java/modeling/ocl/fol/config/Runner.java) for a quick guideline.
 
-### Some examples:
+You can invoke it as a standalone application by the following command:
 
-Below provides a few OCL expression as examples:
-
-```{java}
-//      Case 1: true
-        String inv = "true";
-        
-//      Case 2: caller.students->isEmpty
-        OCL2MSFOL.putAdhocContextualSet("caller", "Lecturer");
-        String inv = "caller.students->isEmpty()";
-        
-//      Case 3: self.age >= 18
-        OCL2MSFOL.putAdhocContextualSet("self", "Student");
-        String inv = "self.age >= 18";
-        
-//      Case 4: Student.allInstances()->forAll(s|s.lecturers->forAll(l|l.age > s.age))
-        String inv = "Student.allInstances()->forAll(s|s.lecturers->forAll(l|l.age > s.age))";
-
-//      Case 5: caller.age = self.age
-        OCL2MSFOL.putAdhocContextualSet("self", "Student");
-        OCL2MSFOL.putAdhocContextualSet("caller", "Lecturer");
-        String inv = "caller.age = self.age";
-        
-//      Case 6: self.name = user
-        OCL2MSFOL.putAdhocContextualSet("self", "Student");
-        OCL2MSFOL.putAdhocContextualSet("user", "String");
-        String inv = "self.name = user";
+```bash
+java -jar ocl2msfol-1.0.1.jar
+  -out <output_theory_url>
+  -in <input_datamodel_url>
+  -ctx [<var>:<type>]*
+  -inv [<ocl_expr>]*
+  -ocl <ocl_exp>
 ```

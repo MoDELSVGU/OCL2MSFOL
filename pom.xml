@@ -2,7 +2,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>io.github.modelsvgu</groupId>
 	<artifactId>OCL2MSFOL</artifactId>
-	<version>1.0.0</version>
+	<version>1.0.1</version>
 	<name>${project.groupId}:${project.artifactId}</name>
 	<description>An implementation of mapping from OCL (Object Constraint Language) constraints to Many-Sorted First-Order Logic (MSFOL).</description>
 	<url>https://github.com/MoDELSVGU/OCL2MSFOL</url>

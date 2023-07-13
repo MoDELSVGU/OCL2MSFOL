@@ -58,7 +58,7 @@ public class Runner {
 					i++;
 				}
 			} else if ("-ocl".equalsIgnoreCase(args[i])) {
-				ocl = args[i];
+				ocl = args[i + 1];
 			}
 		}
 
